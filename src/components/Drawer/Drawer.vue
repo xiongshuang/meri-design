@@ -10,34 +10,33 @@
                 @mouseleave="drawerLeave"
         >
             <div class="p-drawer-title" v-show="title">
-                <section class="p-title-text">{{title}}</section>
-                <Icon type="close" class="p-drawer-title-icon" @click="onClose" />
+                <section class="p-drawer-title-text">{{title}}</section>
+                <i class="p-drawer-title-icon">
+                    <IconClose @click="onClose" />
+                </i>
             </div>
             <div :class="['p-drawer-content', bottom&&'p-drawer-content-bottom']" @scroll="contentScroll">
                 <!-- @slot html内容 -->
-                <slot></slot>
+                <slot name="content" />
                 <section class="p-drawer-content-loading" v-if="loadingMore">
                     <LoadingGrey />
                     <span>加载中...</span>
                 </section>
             </div>
-            <!--<div :class="['p-drawer-handle', bottom&&'p-drawer-handle-bottom']" v-if="btnShow">-->
-            <div :class="['p-drawer-handle', bottom&&'p-drawer-handle-bottom']" v-if="bottom">
-                <Button type="primary" @click="onConfirm" :loading="loading">确定</Button>
-                <Button type="default" @click="onClose">取消</Button>
+            <div :class="['p-drawer-handle', bottom&&'p-drawer-handle-bottom']" v-if="$slots.handle">
+                <slot name="handle" />
             </div>
         </div>
     </transition>
 </template>
 
 <script>
-    import Icon from '../Icon';
-    import Button from '../Button';
+    import IconClose from '../static/iconSvg/icon_close.svg';
     import LoadingGrey from '../static/iconSvg/loading_grey.svg';
 
     export default {
         name: 'Drawer',
-        components: { Icon, Button, LoadingGrey },
+        components: { IconClose, LoadingGrey },
         props: {
             /**
              * 侧拉窗显示状态
@@ -61,13 +60,6 @@
                 type: String,
                 default: '',
                 require: true
-            },
-            /**
-             * 点击确定按钮 是否加载确定按钮loading动画
-             */
-            loading: {
-                type: Boolean,
-                default: false
             },
             /**
              * 是否固定底部操作栏
@@ -100,12 +92,6 @@
                         this.$refs.drawerBox.focus();
                     })
                 }
-            },
-            // 监听滚动的距离
-            scrollTop(n, o) {
-                if (n === o && n>0) {
-                    console.log(n)
-                }
             }
         },
         created() {
@@ -131,8 +117,7 @@
              * 关闭侧拉窗
              */
             onClose() {
-                if (this.loading) this.$emit('changeLoading', false);
-                this.$emit('changeStatus', false);
+                this.$emit('close', false);
             },
             // 监听页面触底
             contentScroll(e) {
@@ -146,14 +131,6 @@
                         this.$emit('getMore')
                     }
                 })
-            },
-            /**
-             * 点击确定按钮执行的回调
-             */
-            onConfirm() {
-                if (this.loading) return;
-                this.$emit('changeLoading', true);
-                this.$emit('confirm');
             }
         }
     }
@@ -167,11 +144,12 @@
         position fixed
         right 0
         top 48px
-        background-color #fff
-        box-shadow 0 2px 10px 0 rgba(31,35,41,.1)
+        background-color $white
+        box-shadow $box-shadow-bottom
         min-width 304px
         max-width 680px
         height calc(100% - 48px)
+        font-size 0
         z-index 899
     .p-drawer-title
         position relative
@@ -181,20 +159,29 @@
         width 100%
         height 56px
         line-height @height
-        .p-title-text
-            max-width 98%
+        .p-drawer-title-text
+            max-width calc(100% - 16px)
             color $grey-900
             font-size 16px
+            font-weight 500
             overflow hidden
             text-overflow ellipsis
             white-space nowrap
         .p-drawer-title-icon
             position absolute
-            top 16px
+            top 8px
             right 28px
-            //overflow-y auto
+            display inline-block
+            width 16px
+            height 16px
+            svg
+                cursor pointer
+                &:hover
+                    path
+                        fill $blue-500
+                        transition fill .3s
     .p-drawer-content
-        padding 12px 32px
+        padding 16px 32px
         width 100%
         height calc(100% - 56px)
         overflow auto
@@ -202,21 +189,23 @@
             padding 16px
             width 100%
             text-align center
-            svg, span
+            svg
+                width 16px
                 vertical-align middle
             span
+                vertical-align middle
                 color $grey-600
                 font-size 14px
     .p-drawer-content-bottom
         height calc(100% - 128px)
     .p-drawer-handle
         padding 20px 32px
-        background-color #fff
+        background-color $white
         width 100%
     .p-drawer-handle-bottom
         position absolute
         right 0
         bottom 0
-        box-shadow 0 -2px 10px 0 rgba(31,35,41,.1)
+        box-shadow $box-shadow-top
 
 </style>

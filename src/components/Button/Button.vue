@@ -1,26 +1,43 @@
 <template>
-    <section :class="`p-button p-button-${type} p-button-${size}`" @click="handleClick">
-        <!-- @slot html内容 -->
-        <span><slot></slot></span>
-        <LoadingIcon class="p-button-loading" v-if="loading" />
-    </section>
+    <div :class="`p-button p-button-${type} p-button-${size} ${minWidth ? 'min-size' : ''} ${disabled ? ('p-button-' + type + '-disabled') : ''} `" @click="handleClick">
+        <Icon v-if="type === 'icon' || type === 'icon-border' || type === 'icon-text'" type="action" :name='icon' />
+        <template>
+            <div v-if="text && type !== 'icon' && type !== 'icon-border'" ref="text" class="text">{{text}}</div>
+            <div v-else-if="type !== 'icon' && type !== 'icon-border'" ref="text" class="text"><slot/></div>
+        </template>
+        <LoadingIcon class="p-button-loading" v-if="loading && type !== 'icon' && type !== 'icon-border' && type !== 'icon-text' && type !== 'text' && type !== 'text-red' && type !== 'text-blue'" />
+    </div>
 </template>
 
 <script>
     import LoadingIcon from '../static/iconSvg/loading.svg';
-
+    import Icon from '../Icon';
     export default {
         name: 'Button',
-        components: { LoadingIcon },
+        components: { LoadingIcon, Icon },
         props: {
             /**
+             * 按钮文本
+             */
+            text: {
+                type: String,
+                default: ''
+            },
+            /**
              * 按钮类型
-             * 可选值 【default primary success warning error disabled】
+             * 可选值 【default primary error disabled text text-blue text-red icon icon-text icon-border】
              */
             type: {
                 type: String,
                 required: true,
                 default: 'default'
+            },
+            /**
+             * icon类型
+             */
+            icon: {
+                type: String,
+                default: ''
             },
             /**
              * 按钮loading状态
@@ -36,14 +53,39 @@
             size: {
                 type: String,
                 default: 'medium'
+            },
+            /**
+             * 是否禁用
+             * 可选值 【true, false】
+             */
+            disabled: {
+                type: Boolean,
+                default: false
             }
         },
+        data () {
+            return {
+                minWidth: false //小尺寸按钮内容宽度小于28px时，设置按钮最小宽度60px
+            }
+        },
+        watch: {
+            text () {
+                this.minWidthAction()
+            }
+        },
+        mounted () {
+            this.minWidthAction()
+        },
         methods: {
+            minWidthAction () {
+                if (this.type === 'icon' || this.type === 'icon-text') return;
+                if (this.$refs.text) this.minWidth = this.$refs.text.innerHTML.length === 1
+            },
             /**
              * 点击按钮的回调
              */
             handleClick() {
-                if (this.type === 'disabled') return;
+                if (this.type === 'disabled' || this.disabled) return;
                 this.$emit('click')
             }
         }
@@ -59,72 +101,71 @@
         justify-content center
         padding-left 8px
         padding-right 8px
-        background-color #fff
+        background-color $white
         border-width 1px
         border-style solid
         border-radius 4px
         transition all .36s
-        overflow hidden
+        font-size 0
         text-align center
+        &:after
+            content ''
+            color transparent
+        &:before
+            content ''
+            color transparent
         &+.p-button
             margin-left 12px
-        span
+        .text
+            overflow hidden
+            white-space nowrap
+            text-overflow ellipsis
             position relative
             display ruby
             vertical-align middle
             z-index 1
             user-select none
-        //font-size 14px
         .p-button-loading
             margin-left 4px
             vertical-align middle
-        &::after
-            content ''
-            display block
-            position absolute
-            width 100%
-            height 100%
-            top 0
-            left 0
-            pointer-events none
-            //设置径向渐
-            //background radial-gradient(circle, red 10%, transparent 10.01%) !important
-            background-repeat no-repeat
-            //background-position 50%
-            transform scale(10, 10)
-            opacity 0
-            transition transform .3s, opacity .5s
-        &:active::after
-            transform scale(0, 0)
-            opacity 1
-            //设置初始状
-            transition 0s
     .p-button-large
-        //max-width 120px
+        max-width 128px
         min-width 80px
         height 40px
-        line-height @height
-        span
+        line-height @height - 2
+        .text
             font-size 16px
+        .p-button-loading
+            width 20px
+            height 20px
     .p-button-medium
-        //max-width 120px
+        max-width 116px
         min-width 80px
         height 32px
-        line-height @height
-        span
+        line-height @height - 2
+        .text
             font-size 14px
+        .p-button-loading
+            width 16px
+            height 16px
     .p-button-small
-        //max-width 100px
-        min-width 68px
+        max-width 108px
+        min-width 60px
         height 28px
-        line-height @height
-        span
+        line-height @height - 2
+        .text
             font-size 14px
-    .p-button-default
-        background-color #fff
+        .p-button-loading
+            width 12px
+            height 12px
+    .p-button-default, .p-button-icon-text
+        background-color $white
         border-color $grey-400
         color $grey-900
         cursor pointer
+        .p-button-loading
+            path
+                fill $grey-900
         &:hover
             border-color $blue-500
             color $blue-500
@@ -139,7 +180,7 @@
     .p-button-primary
         background-color $blue-500
         border-color $blue-500
-        color #fff
+        color $white
         cursor pointer
         &:hover
             background-color $blue-400
@@ -149,36 +190,10 @@
             border-color $blue-600
         &::after
             background radial-gradient(circle, $blue-300 10%, transparent 10%)
-    .p-button-success
-        background-color $green-500
-        border-color $green-500
-        color #fff
-        cursor pointer
-        &:hover
-            background-color $green-400
-            border-color $green-400
-        &:active
-            background-color $green-600
-            border-color $green-600
-        &::after
-            background radial-gradient(circle, $green-300 10%, transparent 10%)
-    .p-button-warning
-        background-color $orange-500
-        border-color $orange-500
-        color #fff
-        cursor pointer
-        &:hover
-            background-color $orange-400
-            border-color $orange-400
-        &:active
-            background-color $orange-600
-            border-color $orange-600
-        &::after
-            background radial-gradient(circle, $orange-300 10%, transparent 10%)
     .p-button-error
         background-color $red-500
         border-color $red-500
-        color #fff
+        color $white
         cursor pointer
         &:hover
             background-color $red-400
@@ -188,17 +203,188 @@
             border-color $red-600
         &::after
             background radial-gradient(circle, $red-300 10%, transparent 10%)
-    .p-button-disabled
+    .p-button-disabled,
+    .p-button-default-disabled,
+    .p-button-primary-disabled,
+    .p-button-error-disabled
         background-color $red-200
         color $grey-400
         cursor not-allowed
-    .p-button-link
+        border-color $grey-200
+        &:hover
+            background-color $red-200
+            border-color $red-200
+            color $grey-400
+        &:active
+            background-color $red-200
+            border-color $red-200
+            color $grey-400
+    .p-button-text-blue
         border-style none
         color $blue-500
         cursor pointer
         &:hover
-            color $blue-400
+            color $blue-500
         &:active
             color $blue-600
+    .p-button-text-red
+        border-style none
+        color $red-500
+        cursor pointer
+        &:hover
+            color $red-400
+        &:active
+            color $red-600
+    .min-size
+        min-width 0
+    .p-button-icon,.p-button-icon-border
+        border-color $grey-400
+        padding 0
+        cursor pointer
+        path
+            fill $grey-900
+            transition all .36s
+        .p-icon
+            svg
+                width 100%!important
+                height 100%!important
+    .p-button-icon
+        border-color transparent
+        &:hover
+            color $blue-500
+            path
+                fill $blue-500
+        &:active
+            color $blue-600
+            path
+                fill $blue-600
+        &::after
+            color $blue-500
+            path
+                fill $blue-500
+    .p-button-icon-border
+        &:hover
+            border-color $blue-500
+            color $blue-500
+            path
+                fill $blue-500
+        &:active
+            border-color $blue-600
+            color $blue-600
+            path
+                fill $blue-600
+        &::after
+            border-color $blue-500
+            color $blue-500
+            path
+                fill $blue-500
+    .p-button-icon.p-button-large,.p-button-icon-border.p-button-large
+        width 40px
+        min-width 40px
+        .p-icon
+            width 24px
+            height 24px
+            line-height 24px
+    .p-button-icon.p-button-medium,.p-button-icon-border.p-button-medium
+        width 32px
+        min-width 32px
+        .p-icon
+            width 16px
+            height 16px
+            line-height 16px
+    .p-button-icon.p-button-small,.p-button-icon-border.p-button-small
+        width 28px
+        min-width 28px
+        .p-icon
+            width 12px
+            height 12px
+            line-height 12px
+    .p-button-icon-text
+        border-color transparent
+        &:hover
+            border-color transparent
+        path
+            fill $grey-900
+            transition all .36s
+        &:hover
+            color $blue-500
+            path
+                fill $blue-500
+        &:active
+            color $blue-600
+            path
+                fill $blue-600
+        &::after
+            color $blue-500
+            path
+                fill $blue-500
+        .p-icon
+            margin-right 4px
+            svg
+                width 100%!important
+                height 100%!important
+    .p-button-icon-text.p-button-large
+        .p-icon
+            width 20px
+            height 20px
+            line-height 20px
+    .p-button-icon-text.p-button-medium
+        .p-icon
+            width 16px
+            height 16px
+            line-height 16px
+    .p-button-icon-text.p-button-small
+        .p-icon
+            width 12px
+            height 12px
+            line-height 12px
+    .p-button-icon-border-disabled
+        background-color $red-200
+        color $grey-400
+        cursor not-allowed
+        border-color $red-200
+        svg
+            cursor not-allowed
+            path
+                fill $grey-400
+        &:hover
+            border-color $red-200
+            path
+                fill $grey-400
+    .p-button-icon-disabled
+        color $grey-400
+        cursor not-allowed
+        svg
+            cursor not-allowed
+            path
+                fill $grey-400
+        &:hover
+            path
+                fill $grey-400
+    .p-button-icon-text-disabled
+        color $grey-400
+        cursor not-allowed
+        svg
+            cursor not-allowed
+            path
+                fill $grey-400
+        &:hover
+            color $grey-400
+            path
+                fill $grey-400
+    .p-button-text
+        border-color transparent
+        cursor pointer
+        color $grey-900
+        &:hover
+            color $blue-500
+            border-color transparent
+        &:active
+            color $blue-600
+    .p-button-text-disabled, .p-button-text-blue-disabled, .p-button-text-red-disabled
+        cursor not-allowed
+        color $grey-400
+        &:hover
+            color $grey-400
 
 </style>

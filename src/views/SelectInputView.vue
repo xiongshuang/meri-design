@@ -6,7 +6,7 @@
                 placeholder="添加设备"
                 :triangle="triangle"
                 :data="selectedData"
-                tipPlace="right"
+                tipPlace="bottom"
                 @changeValue="changeValue"
                 @changeTriangle="changeTriangle"
         />

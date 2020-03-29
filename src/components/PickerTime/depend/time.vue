@@ -1,32 +1,29 @@
 <template>
-    <div class="p-picker-child-select-box">
-        <div class="p-picker-child-select-box-title" v-if="range">
-            <section class="p-picker-child-select-box-title-text">
-                <article>{{title}}</article>
-            </section>
-        </div>
+    <div :class="['p-picker-child-select-box', 'p-picker-child-select-box-'+borderLeft]">
         <div class="p-picker-child-title">
-            <section :class="['p-picker-time-title-item', 'p-picker-time-title-item-'+format]">时</section>
-            <section :class="['p-picker-time-title-item', 'p-picker-time-title-item-'+format]">分</section>
-            <section :class="['p-picker-time-title-item', 'p-picker-time-title-item-'+format]" v-if="format==='hms'">秒</section>
+            <section class="p-picker-time-title-item">时</section>
+            <section class="p-picker-time-title-item">分</section>
+            <section class="p-picker-time-title-item" v-if="format==='hms'">秒</section>
         </div>
         <div class="p-picker-time-content">
             <div
                     :class="['p-picker-time-select', 'p-picker-time-select-'+format]"
                     ref="hoursDom"
+                    @scroll="hourScroll"
             >
                 <ul>
                     <li
                             :class="['p-picker-time-text', hour===hh&&'p-picker-time-text-selected']"
                             v-for="(hh, hi) in hours"
                             :key="'hour'+hi+hh"
-                            @click="hourClick(hh)"
+                            @click.stop="hourClick(hh)"
                     ><span>{{hh}}</span></li>
                 </ul>
             </div>
             <div
                     :class="['p-picker-time-select', 'p-picker-time-select-'+format]"
                     ref="minutesDom"
+                    @scroll="minuteScroll"
             >
                 <ul>
                     <li
@@ -38,9 +35,10 @@
                 </ul>
             </div>
             <div
+                    v-if="format==='hms'"
                     :class="['p-picker-time-select', 'p-picker-time-select-'+format]"
                     ref="secondsDom"
-                    v-if="format==='hms'"
+                    @scroll="secondScroll"
             >
                 <ul>
                     <li
@@ -57,42 +55,20 @@
 
 <script>
     import CountNumber from '../../static/utils/datePicker/CountNumber';
+    import CountNowDate from '../../static/utils/datePicker/CountNowDate';
 
     export default {
         name: "TimeSelect",
         props: {
-            /**
-             * 时间title
-             */
-            title: {
+            // 左边框
+            borderLeft: {
                 type: String,
                 default: ''
             },
             /**
-             * 继承父级range
+             * 选择的时间
              */
-            range: {
-                type: Boolean,
-                default: false
-            },
-            /**
-             * 选择的小时
-             */
-            hour: {
-                type: String,
-                default: ''
-            },
-            /**
-             * 选择的分钟
-             */
-            minute: {
-                type: String,
-                default: ''
-            },
-            /**
-             * 选择的秒
-             */
-            second: {
+            time: {
                 type: String,
                 default: ''
             },
@@ -105,6 +81,13 @@
                 default: 'hms'
             },
         },
+        data() {
+            return {
+                hour: '00', // 选择的小时
+                minute: '00', // 选择的分钟
+                second: '00' // 选择的秒
+            }
+        },
         computed: {
             hours() {
                 return CountNumber(0, 24)
@@ -116,37 +99,74 @@
                 return CountNumber(0, 60)
             }
         },
-        mounted() {
-            this.$nextTick(() => {
-                this.$refs.hoursDom.scrollTop=this.hour*32;
-                this.$refs.minutesDom.scrollTop=this.minute*32;
-                if (this.$refs.secondsDom) this.$refs.secondsDom.scrollTop=this.second*32;
-            });
+        watch: {
+            time(n, o) {
+                if (n === o) return;
+                this.setTime(n);
+            }
         },
+        created() {
+            this.setTime(this.time);
+        },
+        // mounted() {
+        //     this.setTimeDom();
+        // },
         methods: {
+            /**
+             * 设置时间
+             */
+            setTime(time) {
+                let hour='00', minute='00', second='00';
+                if (time) {
+                    const [hh, mm, ss]=this.time.split(':');
+                    hour=hh;
+                    minute=mm;
+                    if (this.format === 'hms') second=ss;
+                }
+                // else {
+                //     const [YY, MM, DD, hh, mm, ss]=CountNowDate();
+                //     hour=hh;
+                //     minute=mm;
+                //     second=ss;
+                // }
+                this.hour=hour;
+                this.minute=minute;
+                this.second=second;
+            },
+            // 设置时分秒位置
+            setTimeDom() {
+                this.$nextTick(() => {
+                    if (this.$refs.hoursDom) this.$refs.hoursDom.scrollTop=this.hour*32;
+                    if (this.$refs.minutesDom) this.$refs.minutesDom.scrollTop=this.minute*32;
+                    if (this.$refs.secondsDom) this.$refs.secondsDom.scrollTop=this.second*32;
+                });
+            },
             /**
              * 点击小时
              * @param hour
              */
             hourClick(hour) {
+                this.hour=hour;
                 this.scrollTopTimer(hour*32, 'hoursDom');
-                this.$emit('hourChange', hour);
+                this.$emit('change', hour+':'+this.minute+`${this.format==='hms'?':'+this.second:''}`);
             },
             /**
              * 点击分钟
              * @param minute
              */
             minuteClick(minute) {
+                this.minute=minute;
                 this.scrollTopTimer(minute*32, 'minutesDom');
-                this.$emit('minuteChange', minute);
+                this.$emit('change', this.hour+':'+minute+`${this.format==='hms'?':'+this.second:''}`);
             },
             /**
              * 点击秒
              * @param second
              */
             secondClick(second) {
+                this.second=second;
                 this.scrollTopTimer(second*32, 'secondsDom');
-                this.$emit('secondChange', second);
+                this.$emit('change', this.hour+':'+this.minute+':'+second);
             },
             /**
              * 滚动条过度
@@ -154,11 +174,16 @@
              * @param obj 当前ref对象
              */
             scrollTopTimer(st, obj) {
+                if (!obj) return;
                 let top = this.$refs[obj].scrollTop;
                 let differ=st-top; // 差值
                 let remain=differ; // 剩余差值
-                this.timer=setInterval(() => {
-                    let speed = window.Math.ceil(remain / 3);
+                this.timer=window.setInterval(() => {
+                    let speed = window.Math.round(remain / 3);
+                    if (speed <= 0) {
+                        window.clearInterval(this.timer);
+                        this.timer=null;
+                    }
                     remain=remain-speed;
                     if (differ) {
                         this.$refs[obj].scrollTop+=speed;
@@ -167,9 +192,40 @@
                     }
                     if (remain<=0) {
                         window.clearInterval(this.timer);
+                        this.timer=null;
                         this.$refs[obj].scrollTop=st;
                     }
                 }, 30)
+            },
+            // 小时scroll
+            hourScroll(e) {
+                if (this.timer) return;
+                if (this.hourTimer) window.clearTimeout(this.hourTimer);
+                const target=e.target || e;
+                const st=window.Math.round(target.scrollTop/32);
+                this.hourTimer=window.setTimeout(() => {
+                    target.scrollTop=st*32;
+                }, 30);
+            },
+            // 分钟scroll
+            minuteScroll(e) {
+                if (this.timer) return;
+                if (this.minuteTimer) window.clearTimeout(this.minuteTimer);
+                const target=e.target || e;
+                const st=window.Math.round(target.scrollTop/32);
+                this.minuteTimer=window.setTimeout(() => {
+                    target.scrollTop=st*32;
+                }, 30);
+            },
+            // 秒钟scroll
+            secondScroll(e) {
+                if (this.timer) return;
+                if (this.secondTimer) window.clearTimeout(this.secondTimer);
+                const target=e.target || e;
+                const st=window.Math.round(target.scrollTop/32);
+                this.secondTimer=window.setTimeout(() => {
+                    target.scrollTop=st*32;
+                }, 30);
             }
         }
     }
@@ -188,7 +244,7 @@
         margin-bottom 8px
         padding-left 16px
         padding-right 16px
-        .p-picker-child-title-item
+        .p-picker-time-title-item
             height 24px
             line-height @height
             color $grey-500
@@ -211,46 +267,45 @@
             height 24px
             z-index 9
             content ''
-        .p-picker-time-select-hms
-            width 98px
-            ul
-                li
-                    padding-left 36px
-        .p-picker-time-select-hm
-            width 147px
-            ul
-                li
-                    padding-left 60px
-        .p-picker-time-select
-            position relative
-            z-index 10
-            height 192px
-            overflow hidden
+    .p-picker-time-select-hms
+        width 98px
+        ul
+            li
+                padding-left 36px
+    .p-picker-time-select-hm
+        width 147px
+        ul
+            li
+                padding-left 60px
+    .p-picker-time-select
+        position relative
+        z-index 10
+        height 192px
+        overflow hidden
+        &:hover
+            overflow-y auto
+        ul
+            padding-bottom 160px
+            width 100%
+        .p-picker-time-text
+            margin-bottom 8px
+            width 100%
+            height 24px
+            line-height @height
             &:hover
-                overflow-y auto
-            ul
-                padding-bottom 160px
-                width 100%
-            .p-picker-time-text
-                margin-bottom 8px
-                width 100%
-                height 24px
-                line-height @height
+                background-color $grey-200
+                border-radius 4px
+            span
+                color $grey-900
+                font-size 14px
+                text-align center
+                cursor pointer
+                transition color .3s
+                user-select none
                 &:hover
                     background-color $grey-200
-                    border-radius 4px
+            &.p-picker-time-text-selected
                 span
-                    color $grey-900
-                    font-size 14px
-                    text-align center
-                    cursor pointer
-                    transition color .3s
-                    user-select none
-                    &:hover
-                        background-color $grey-200
-                &.p-picker-time-text-selected
-                    span
-                        color $blue-500
-
+                    color $blue-500
 
 </style>

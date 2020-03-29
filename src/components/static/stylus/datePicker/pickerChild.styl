@@ -17,7 +17,14 @@
         line-height @height
         user-select none
         cursor pointer
+        transition color .3s
         &+article
           margin-left 12px
-  &+.p-picker-child-select-box
+      .p-picker-active-title
+        &:hover
+          color $blue-500
+  .p-picker-child-select-box
+    border 0
+
+.p-picker-child-select-box-border-left
     border-left 0

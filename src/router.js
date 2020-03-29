@@ -5,15 +5,13 @@ Vue.use(Router);
 
 import ComponentLists from './views/ComponentLists';
 import ButtonView from './views/ButtonView';
-import SelectButtonView from './views/SelectButtonView';
-import SelectInputView from './views/SelectInputView';
+import DropDownButtonView from './views/DropDownButtonView';
 import ModalView from './views/ModalView';
 import DrawerView from './views/DrawerView';
 import ToggleView from './views/ToggleView';
 import DropdownView from './views/DropdownView';
 import DropGroupView from './views/DropGroupView';
 import SelectView from './views/SelectView';
-import SelectSearchView from './views/SelectSearchView';
 import BadgeView from './views/BadgeView';
 import DividerView from './views/DividerView';
 import CarouselTextView from './views/CarouselTextView';
@@ -22,28 +20,41 @@ import HeadersView from './views/HeadersView';
 import BreadcrumbView from './views/BreadcrumbView';
 
 import PickerTimeView from './views/PickerTimeView';
-import PickerDayView from './views/PickerDayView';
-import PickerWeekView from './views/PickerWeekView';
-import PickerYearView from './views/PickerYearView';
-import PickerMonthView from './views/PickerMonthView';
+import PickerDateView from './views/PickerDateView';
+// import PickerDayView from './views/PickerDayView';
+// import PickerWeekView from './views/PickerWeekView';
+// import PickerYearView from './views/PickerYearView';
+// import PickerMonthView from './views/PickerMonthView';
 import TreeView from './views/TreeView';
 import TreeStageView from './views/TreeStageView';
 import TreeBiView from './views/TreeBiView';
 import ShakeView from './views/ShakeView';
-import StickView from './views/StickView';
+import TopNotificationView from './views/TopNotificationView';
 import TagView from './views/TagView';
 import TransferView from './views/TransferView';
-import TransferSelectView from './views/TransferSelectView';
 import TransferSelectModalView from './views/TransferSelectModalView';
 import TransferMiniView from './views/TransferMiniView';
+import AvatarView from './views/AvatarView';
+import FileUploadView from './views/FileUploadView';
+import ImageUploadView from './views/ImageUploadView';
+import TooltipView from './views/TooltipView';
+import TableView from './views/TableView';
+import PaginationView from './views/PaginationView';
+import PopoverView from './views/PopoverView';
+import IconView from './views/IconView';
+import TreeSelectView from './views/TreeSelectView';
+import CascaderView from './views/CascaderView.vue'
+import EmptyStatusView from './views/EmptyStatusView.vue'
+
+import CheckboxView from './views/CheckboxView';
+import CheckboxGroupView from './views/CheckboxGroupView';
+import RadioView from './views/RadioView';
+import RadioGroupView from './views/RadioGroupView';
+import InputView from './views/InputView';
 
 import MessageView from './views/MessageView';
-
-// 未公开组件
-import CheckboxView from './views/CheckboxView';
-import RadioView from './views/RadioView';
-import InputView from './views/InputView';
-import IconView from './views/IconView';
+import LoadingView from './views/LoadingView';
+import IndexLoadingView from './views/IndexLoadingView';
 
 export default new Router({
     // mode: 'history',
@@ -52,7 +63,7 @@ export default new Router({
     routes: [
         {
             path: '/componentLists',
-            name: 'ComponentLists',
+            name: 'Meri design',
             component: ComponentLists,
             meta: {
                 title: 'ComponentLists'
@@ -68,19 +79,11 @@ export default new Router({
             }
         },
         {
-            path: '/selectButtonView',
-            name: 'SelectButtonView',
-            component: SelectButtonView,
+            path: '/dropDownButtonView',
+            name: 'DropDownButtonView',
+            component: DropDownButtonView,
             meta: {
-                title: 'SelectButtonView'
-            }
-        },
-        {
-            path: '/selectInputView',
-            name: 'SelectInputView',
-            component: SelectInputView,
-            meta: {
-                title: 'SelectInputView'
+                title: 'DropDownButtonView'
             }
         },
         {
@@ -121,14 +124,6 @@ export default new Router({
             component: SelectView,
             meta: {
                 title: 'SelectView'
-            }
-        },
-        {
-            path: '/selectSearchView',
-            name: 'SelectSearchView',
-            component: SelectSearchView,
-            meta: {
-                title: 'SelectSearchView'
             }
         },
         {
@@ -197,38 +192,46 @@ export default new Router({
                 title: 'PickerTimeView'
             }
         },
+        // {
+        //     path: '/pickerDayView',
+        //     name: 'PickerDayView',
+        //     component: PickerDayView,
+        //     meta: {
+        //         title: 'PickerDayView'
+        //     }
+        // },
         {
-            path: '/pickerDayView',
-            name: 'PickerDayView',
-            component: PickerDayView,
+            path: '/pickerDateView',
+            name: 'PickerDateView',
+            component: PickerDateView,
             meta: {
-                title: 'PickerDayView'
+                title: 'PickerDateView'
             }
         },
-        {
-            path: '/pickerWeekView',
-            name: 'PickerWeekView',
-            component: PickerWeekView,
-            meta: {
-                title: 'PickerWeekView'
-            }
-        },
-        {
-            path: '/pickerYearView',
-            name: 'PickerYearView',
-            component: PickerYearView,
-            meta: {
-                title: 'PickerYearView'
-            }
-        },
-        {
-            path: '/pickerMonthView',
-            name: 'PickerMonthView',
-            component: PickerMonthView,
-            meta: {
-                title: 'PickerMonthView'
-            }
-        },
+        // {
+        //     path: '/pickerWeekView',
+        //     name: 'PickerWeekView',
+        //     component: PickerWeekView,
+        //     meta: {
+        //         title: 'PickerWeekView'
+        //     }
+        // },
+        // {
+        //     path: '/pickerYearView',
+        //     name: 'PickerYearView',
+        //     component: PickerYearView,
+        //     meta: {
+        //         title: 'PickerYearView'
+        //     }
+        // },
+        // {
+        //     path: '/pickerMonthView',
+        //     name: 'PickerMonthView',
+        //     component: PickerMonthView,
+        //     meta: {
+        //         title: 'PickerMonthView'
+        //     }
+        // },
         {
             path: '/treeView',
             name: 'TreeView',
@@ -262,11 +265,11 @@ export default new Router({
             }
         },
         {
-            path: '/stickView',
-            name: 'StickView',
-            component: StickView,
+            path: '/topNotificationView',
+            name: 'TopNotificationView',
+            component: TopNotificationView,
             meta: {
-                title: 'StickView'
+                title: 'TopNotificationView'
             }
         },
         {
@@ -286,14 +289,6 @@ export default new Router({
             }
         },
         {
-            path: '/transferSelectView',
-            name: 'TransferSelectView',
-            component: TransferSelectView,
-            meta: {
-                title: 'TransferSelectView'
-            }
-        },
-        {
             path: '/transferSelectModalView',
             name: 'TransferSelectModalView',
             component: TransferSelectModalView,
@@ -309,6 +304,30 @@ export default new Router({
                 title: 'TransferMiniView'
             }
         },
+        {
+            path: '/avatarView',
+            name: 'AvatarView',
+            component: AvatarView,
+            meta: {
+                title: 'AvatarView'
+            }
+        },
+        {
+            path: '/fileUploadView',
+            name: 'FileUploadView',
+            component: FileUploadView,
+            meta: {
+                title: 'FileUploadView'
+            }
+        },
+        {
+            path: '/imageUploadView',
+            name: 'ImageUploadView',
+            component: ImageUploadView,
+            meta: {
+                title: 'ImageUploadView'
+            }
+        },
 
         // 函数组件
         {
@@ -319,14 +338,45 @@ export default new Router({
                 title: 'MessageView'
             }
         },
+        {
+            path: '/loadingView',
+            name: 'LoadingView',
+            component: LoadingView,
+            meta: {
+                title: 'LoadingView'
+            }
+        },
+        {
+            path: '/indexLoadingView',
+            name: 'IndexLoadingView',
+            component: IndexLoadingView,
+            meta: {
+                title: 'IndexLoadingView'
+            }
+        },
 
-        // 未公开组件
+        {
+            path: '/tooltipView',
+            name: 'TooltipView',
+            component: TooltipView,
+            meta: {
+                title: 'TooltipView'
+            }
+        },
         {
             path: '/checkboxView',
             name: 'CheckboxView',
             component: CheckboxView,
             meta: {
                 title: 'CheckboxView'
+            }
+        },
+        {
+            path: '/CheckboxGroupView',
+            name: 'CheckboxGroupView',
+            component: CheckboxGroupView,
+            meta: {
+                title: 'CheckboxGroupView'
             }
         },
         {
@@ -338,11 +388,11 @@ export default new Router({
             }
         },
         {
-            path: '/inputView',
-            name: 'InputView',
-            component: InputView,
+            path: '/RadioGroupView',
+            name: 'RadioGroupView',
+            component: RadioGroupView,
             meta: {
-                title: 'InputView'
+                title: 'RadioGroupView'
             }
         },
         {
@@ -351,6 +401,64 @@ export default new Router({
             component: IconView,
             meta: {
                 title: 'IconView'
+            }
+        },
+        {
+            path: '/treeSelectView',
+            name: 'TreeSelectView',
+            component: TreeSelectView,
+            meta: {
+                title: 'TreeSelectView'
+            }
+        },
+        {
+            path: '/cascaderView',
+            name: 'CascaderView',
+            component: CascaderView,
+            meta: {
+                title: 'CascaderView'
+            }
+        },
+        {
+            path: '/emptyStatusView',
+            name: 'EmptyStatusView',
+            component: EmptyStatusView,
+            meta: {
+                title: 'EmptyStatusView'
+            }
+        },
+        {
+            path: '/popoverView',
+            name: 'PopoverView',
+            component: PopoverView,
+            meta: {
+                title: 'PopoverView'
+            }
+        },
+        {
+            path: '/tableView',
+            name: 'TableView',
+            component: TableView,
+            meta: {
+                title: 'TableView'
+            }
+        },
+        {
+            path: '/paginationView',
+            name: 'PaginationView',
+            component: PaginationView,
+            meta: {
+                title: 'PaginationView'
+            }
+        },
+
+        // 未公开组件
+        {
+            path: '/inputView',
+            name: 'InputView',
+            component: InputView,
+            meta: {
+                title: 'InputView'
             }
         },
 

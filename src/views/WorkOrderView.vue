@@ -54,7 +54,7 @@
     padding 16px 32px
     width 472px
     height 800px
-    box-shadow 0 2px 10px 0 rgba(31,35,41,.1)
+    box-shadow $box-shadow-bottom
     overflow-y auto
 
 </style>

@@ -24,7 +24,7 @@
              */
             data: {
                 type: Array,
-                default: []
+                default: () => []
             }
         },
         computed: {

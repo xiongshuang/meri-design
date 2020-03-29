@@ -1,11 +1,14 @@
 <template>
     <div class="component component-padding">
         <h1>PickerYear组件</h1>
-        <PickerYear :date="dateDouble" :range="true" @change="dateChangeDouble" />
-        <br><br><br><br><br><br><br><br><br>
-        <br><br><br><br><br><br><br><br><br>
-        <br><br><br><br><br>
         <PickerYear :date="dateSingle" @change="dateChangeSingle" />
+        <br><br>
+        <PickerYear :date="dateSingle" :quickSwitch="true" @change="dateChangeSingle" />
+
+        <br><br><br><br><br>
+        <PickerYear :date="dateDouble" :range="true" @change="dateChangeDouble" />
+        <br><br>
+        <PickerYear :date="dateDouble" :quickSwitch="true" :range="true" @change="dateChangeDouble" />
     </div>
 </template>
 
@@ -16,8 +19,8 @@
             return {
                 // dateSingle: '2020',
                 dateSingle: '',
-                // dateDouble: ''
-                dateDouble: '2015-2020'
+                dateDouble: ''
+                // dateDouble: '2015-2020'
             }
         },
         methods: {

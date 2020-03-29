@@ -50,6 +50,9 @@
                     else this.setCountNum();
                 }, 5000)
             }
+        },
+        beforeDestroy() {
+            clearInterval(this.timer);
         }
     }
 </script>

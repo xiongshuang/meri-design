@@ -18,11 +18,11 @@ Headers组件分为左中右三块内容，使用具名插槽;<br>
             <h3 style="font-size: 14px">1.Select + Breadcrumb + Tabs + Button</h3>
             <Headers>
                 <template v-slot:left>
-                    <div style="margin-right: 12px"><Select v-model="selectId" :data="selectData" :radius="true" width="120" /></div>
+                    <div style="margin-right: 12px"><Select v-model="selectId" placeholder="请选择" :selectdata="selectData" :radius="true" width="144" /></div>
                     <Breadcrumb :data="breadData1" />
                 </template>
                 <template v-slot:middle>
-                    <Tabs :data="tabData" v-model="tabId" />
+                    <Tabs type="first-nav" :data="tabData" v-model="tabId" />
                 </template>
                 <template v-slot:right>
                     <Button type="default">默认</Button>
@@ -137,7 +137,7 @@ Headers组件分为左中右三块内容，使用具名插槽;<br>
             <h3 style="font-size: 14px">1.Select + Breadcrumb + Tabs + Button</h3>
             <Headers>
                 <template v-slot:left>
-                    <div style="margin-right: 12px"><Select v-model="selectId" :data="selectData" :radius="true" width="120" /></div>
+                   <div style="margin-right: 12px"><Select v-model="selectId" placeholder="请选择" :selectdata="selectData" :radius="true" width="144" /></div>
                     <Breadcrumb :data="breadData1" />
                 </template>
                 <template v-slot:middle>

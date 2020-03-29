@@ -1,7 +1,7 @@
 <template>
-    <div :class="['p-checkbox', disabled&&'p-checkbox-disabled',]" @click="handleChange">
-        <i :class="['p-checkbox-box', 'p-checkbox-'+checked]"/>
-        <span class="p-checkbox-text" v-if="Object.keys($slots).length"><slot></slot></span>
+    <div :class="['p-checkbox', disabled&&'p-checkbox-disabled',]">
+        <i :class="['p-checkbox-box', 'p-checkbox-'+checked]" @click="handleChange" />
+        <span class="p-checkbox-text" v-if="Object.keys($slots).length"><slot /></span>
     </div>
 </template>
 
@@ -24,10 +24,11 @@
             }
         },
         methods: {
-            handleChange() {
+            handleChange(e) {
                 if (this.disabled) return;
-                if (this.checked === 'checked') this.$emit('change', 'uncheck');
-                else this.$emit('change', 'checked');
+                const dataset=e.target.parentNode.dataset;
+                if (this.checked === 'checked') this.$emit('change', 'uncheck', dataset);
+                else this.$emit('change', 'checked', dataset);
             }
         }
     }
@@ -36,6 +37,7 @@
 <style lang="stylus">
 .p-checkbox
     display inline-block
+    height 16px
     cursor pointer
     &+.p-checkbox
         margin-left 8px

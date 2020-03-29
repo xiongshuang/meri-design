@@ -9,10 +9,10 @@
         </div>
         <div class="p-modal-content">
             <div class="p-modal-content-main" ref="modalContentMain">
-                <slot name="small"></slot>
+                <slot name="content" />
             </div>
         </div>
-        <slot name="handle"></slot>
+        <slot name="handle" />
     </div>
 </template>
 
@@ -46,6 +46,9 @@
   .p-modal-info-svg
     width 24px
     height 24px
+    svg
+        width 24px
+        height 24px
   .p-modal-title
     border 0
     height 40px

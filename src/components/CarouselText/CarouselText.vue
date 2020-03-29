@@ -38,7 +38,7 @@
              */
             data: {
                 type: Array,
-                default: []
+                default: () => []
             },
             /**
              * 定时器时间,单位s（秒）

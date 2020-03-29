@@ -70,7 +70,7 @@
             id: '0', name: '顶级顶级顶级顶级顶级顶级顶级顶级顶级顶级顶级顶级', open: true, checked: 'uncheck',
             children: [
                 {
-                    id: '1',  name: '一级1', open: true, checked: 'uncheck',
+                    id: '1',  name: '一级1', open: true, checked: 'uncheck', disabled: true,
                     children: [
                         {id: '12', name: '二级2', checked: 'uncheck'},
                         {id: '121', name: '二级3', checked: 'uncheck'},

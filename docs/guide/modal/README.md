@@ -35,6 +35,10 @@
                     @close="modalClose"
                     @confirm="modalConfirm"
             >
+                <template v-slot:headerRight>
+                    <Button type="default">default</Button>
+                    <Button type="primary">primary</Button>
+                </template>
                 <div style="font-size: 20px; width: 600px">
                     123
                     <br><br><br><br><br><br><br><br>
@@ -109,6 +113,7 @@
         }
     }
 </script>
+
 <style lang="stylus" scoped>
 .component
     h3
@@ -153,6 +158,10 @@
                     @close="modalClose"
                     @confirm="modalConfirm"
             >
+                <template v-slot:headerRight>
+                    <Button @click="tap" type="default">default</Button>
+                    <Button @click="tap" type="primary">primary</Button>
+                </template>
                 <div style="font-size: 20px; width: 600px">
                     123
                     <br><br><br><br><br><br><br><br>

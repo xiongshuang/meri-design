@@ -3,11 +3,13 @@
         <PanelDoubleYear
                 v-if="range"
                 :date="date"
+                :quickSwitch="quickSwitch"
                 @change="changeDouble"
         />
         <PanelSingleYear
                 v-else
                 :date="date"
+                :quickSwitch="quickSwitch"
                 @change="changeSingle"
         />
     </div>
@@ -16,7 +18,6 @@
 <script>
     import PanelSingleYear from './depend/panelSingleYear';
     import PanelDoubleYear from './depend/panelDoubleYear';
-
 
     export default {
         name: "PickerYear",
@@ -37,6 +38,11 @@
              * @value 【false-时间点（默认值），true-时间段】
              */
             range: {
+                type: Boolean,
+                default: false
+            },
+            // 快速切换时间
+            quickSwitch: {
                 type: Boolean,
                 default: false
             }

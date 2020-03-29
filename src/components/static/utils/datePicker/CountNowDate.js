@@ -2,10 +2,10 @@
  * 计算当前时间
  * @constructor
  */
-const dateStr=(num) => {
-    return num<10?`0${num}`:`${num}`
-};
 const CountNowDate=() => {
+    const dateStr=(num) => {
+        return num<10?`0${num}`:`${num}`
+    };
     const date=new Date();
     let YY=date.getFullYear()
         ,MM=date.getMonth()+1

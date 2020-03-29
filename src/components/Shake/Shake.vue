@@ -1,7 +1,7 @@
 <template>
     <div :class="['p-shake', activateStatus&&'p-shake-activate']" >
         <!-- @slot html内容 -->
-        <slot></slot>
+        <slot />
     </div>
 </template>
 

@@ -4,61 +4,39 @@
     <div class="toggleView">
         <div class="component component-padding">
             <h1>Tag组件</h1>
-            <div>
+            <div class="display-panel">
                 <h3>1.big</h3>
-                <Tag size="big" type="blue">属性标签-大标签</Tag>
-                <Tag size="big" type="cyan">大标签</Tag>
-                <Tag size="big" type="turquoise">大标签</Tag>
-                <Tag size="big" type="green">大标签</Tag>
-                <Tag size="big" type="lime">大标签</Tag>
-                <Tag size="big" type="yellow">大标签</Tag>
-                <Tag size="big" type="orange">大标签</Tag>
-                <Tag size="big" type="red">大标签</Tag>
-                <Tag size="big" type="carmine">大标签</Tag>
-                <Tag size="big" type="purple">大标签</Tag>
-                <Tag size="big" type="grey">大标签</Tag>
+                <Tag v-for="(color, i1) in tagBgColors" :key="'big'+color+i1" size='big' :color="color">大标签</Tag>
             </div>
-            <div>
+            <div class="display-panel">
                 <h3>2.small</h3>
-                <Tag size="small" type="blue">属性标签-小标签</Tag>
-                <Tag size="small" type="cyan">小标签</Tag>
-                <Tag size="small" type="turquoise">小标签</Tag>
-                <Tag size="small" type="green">小标签</Tag>
-                <Tag size="small" type="lime">小标签</Tag>
-                <Tag size="small" type="yellow">小标签</Tag>
-                <Tag size="small" type="orange">小标签</Tag>
-                <Tag size="small" type="red">小标签</Tag>
-                <Tag size="small" type="carmine">小标签</Tag>
-                <Tag size="small" type="purple">小标签</Tag>
-                <Tag size="small" type="grey">小标签</Tag>
+                <Tag v-for="(color, i2) in tagBgColors" :key="'small'+color+i2" size='small' :color="color">小标签</Tag>
             </div>
-            <div>
-                <h3>3.better</h3>
-                <Tag size="big" type="blue-better">属性标签-小标签</Tag>
-                <Tag size="big" type="cyan-better">小标签</Tag>
-                <Tag size="big" type="turquoise-better">小标签</Tag>
-                <Tag size="big" type="green-better">小标签</Tag>
-                <Tag size="big" type="lime-better">小标签</Tag>
-                <Tag size="big" type="yellow-better">小标签</Tag>
-                <Tag size="big" type="orange-better">小标签</Tag>
-                <Tag size="big" type="red-better">小标签</Tag>
-                <Tag size="big" type="carmine-better">小标签</Tag>
-                <Tag size="big" type="purple-better">小标签</Tag>
-                <Tag size="big" type="grey-better">小标签</Tag>
+            <div class="display-panel">
+                <h3>3.status</h3>
+                <Tag  type="circular" name='copy'  color="#E1F2FF">标签一</Tag>
+                <Tag  type="circular" name='cost'  color="#D5F6F2">标签二</Tag>
+                <Tag  type="circular" name='start' color="#D9F5D6">标签三</Tag>
+                <Tag  type="circular" name='link'  color="#FAF1D1">标签四</Tag>
+                <Tag  type="circular" name='copy'  color="#FEEAD2">标签一</Tag>
+                <Tag  type="circular" name='cost'  color="#FDE3E2">标签二</Tag>
+                <Tag  type="circular" name='start' color="#FDDDEF">标签三</Tag>
+                <Tag  type="circular" name='link'  color="#ECE2FE">标签四</Tag>
+                <Tag  type="circular" name='copy'  color="#B2E6F2">标签一</Tag>
+                <Tag  type="circular" name='cost'  color="#EFF0F1">标签二</Tag>
             </div>
-            <div>
-                <h3>4.weak</h3>
-                <Tag size="small" type="blue-weak">属性标签-小标签</Tag>
-                <Tag size="small" type="cyan-weak">小标签</Tag>
-                <Tag size="small" type="turquoise-weak">小标签</Tag>
-                <Tag size="small" type="green-weak">小标签</Tag>
-                <Tag size="small" type="lime-weak">小标签</Tag>
-                <Tag size="small" type="yellow-weak">小标签</Tag>
-                <Tag size="small" type="orange-weak">小标签</Tag>
-                <Tag size="small" type="red-weak">小标签</Tag>
-                <Tag size="small" type="carmine-weak">小标签</Tag>
-                <Tag size="small" type="purple-weak">小标签</Tag>
-                <Tag size="small" type="grey-weak">小标签</Tag>
+            <div class="display-panel">
+                <h3>4.dot</h3>
+                <Tag  type="dot" name='copy'  color="#E1F2FF">标签一</Tag>
+                <Tag  type="dot" name='cost'  color="#D5F6F2">标签二</Tag>
+                <Tag  type="dot" name='start' color="#D9F5D6">标签三</Tag>
+                <Tag  type="dot" name='link'  color="#FAF1D1">标签四</Tag>
+                <Tag  type="dot" name='copy'  color="#FEEAD2">标签一</Tag>
+                <Tag  type="dot" name='cost'  color="#FDE3E2">标签二</Tag>
+                <Tag  type="dot" name='start' color="#FDDDEF">标签三</Tag>
+                <Tag  type="dot" name='link'  color="#ECE2FE">标签四</Tag>
+                <Tag  type="dot" name='copy'  color="#B2E6F2">标签一</Tag>
+                <Tag  type="dot" name='cost'  color="#EFF0F1">标签二</Tag>
             </div>
         </div>
     </div>
@@ -66,79 +44,59 @@
 
 <script>
     export default {
-        name: "TagView"
+        name: "TagView",
+        data () {
+            return {
+                tagBgColors: ['#E1F2FF' , '#D5F6F2', '#D9F5D6', '#FAF1D1', '#FEEAD2', '#FDE3E2', '#FDDDEF', '#ECE2FE' ,'#B2E6F2', '#EFF0F1'],
+            }
+        },
     }
 </script>
 
 <style lang="stylus" scoped>
-
     .component
+        .display-panel
+            margin-bottom 40px
         h3
             padding 8px
             font-size 16px
-
 </style>
+ 
 
 ```vue
+
 <template>
     <div class="toggleView">
         <div class="component component-padding">
             <h1>Tag组件</h1>
-            <div>
+            <div class="display-panel">
                 <h3>1.big</h3>
-                <Tag size="big" type="blue">属性标签-大标签</Tag>
-                <Tag size="big" type="cyan">大标签</Tag>
-                <Tag size="big" type="turquoise">大标签</Tag>
-                <Tag size="big" type="green">大标签</Tag>
-                <Tag size="big" type="lime">大标签</Tag>
-                <Tag size="big" type="yellow">大标签</Tag>
-                <Tag size="big" type="orange">大标签</Tag>
-                <Tag size="big" type="red">大标签</Tag>
-                <Tag size="big" type="carmine">大标签</Tag>
-                <Tag size="big" type="purple">大标签</Tag>
-                <Tag size="big" type="grey">大标签</Tag>
+                <Tag v-for="(color, i1) in tagBgColors" :key="'big'+color+i1" size='big' :color="color">大标签</Tag>
             </div>
-            <div>
+            <div class="display-panel">
                 <h3>2.small</h3>
-                <Tag size="small" type="blue">属性标签-小标签</Tag>
-                <Tag size="small" type="cyan">小标签</Tag>
-                <Tag size="small" type="turquoise">小标签</Tag>
-                <Tag size="small" type="green">小标签</Tag>
-                <Tag size="small" type="lime">小标签</Tag>
-                <Tag size="small" type="yellow">小标签</Tag>
-                <Tag size="small" type="orange">小标签</Tag>
-                <Tag size="small" type="red">小标签</Tag>
-                <Tag size="small" type="carmine">小标签</Tag>
-                <Tag size="small" type="purple">小标签</Tag>
-                <Tag size="small" type="grey">小标签</Tag>
+                <Tag v-for="(color, i2) in tagBgColors" :key="'small'+color+i2" size='small' :color="color">小标签</Tag>
             </div>
-            <div>
-                <h3>3.better</h3>
-                <Tag size="big" type="blue-better">属性标签-大标签</Tag>
-                <Tag size="big" type="cyan-better">大标签</Tag>
-                <Tag size="big" type="turquoise-better">大标签</Tag>
-                <Tag size="big" type="green-better">大标签</Tag>
-                <Tag size="big" type="lime-better">大标签</Tag>
-                <Tag size="big" type="yellow-better">大标签</Tag>
-                <Tag size="big" type="orange-better">大标签</Tag>
-                <Tag size="big" type="red-better">大标签</Tag>
-                <Tag size="big" type="carmine-better">大标签</Tag>
-                <Tag size="big" type="purple-better">大标签</Tag>
-                <Tag size="big" type="grey-better">大标签</Tag>
+            <div class="display-panel">
+                <h3>3.status</h3>
+                <Tag  type="circular" name='copy'  color="#E1F2FF">标签一</Tag>
+                <Tag  type="circular" name='cost'  color="#D5F6F2">标签二</Tag>
+                <Tag  type="circular" name='start' color="#D9F5D6">标签三</Tag>
+                <Tag  type="circular" name='link'  color="#FAF1D1">标签四</Tag>
+                <Tag  type="circular" name='copy'  color="#FEEAD2">标签一</Tag>
+                <Tag  type="circular" name='cost'  color="#FDE3E2">标签二</Tag>
+                <Tag  type="circular" name='start' color="#FDDDEF">标签三</Tag>
+                <Tag  type="circular" name='link'  color="#ECE2FE">标签四</Tag>
+                <Tag  type="circular" name='copy'  color="#B2E6F2">标签一</Tag>
+                <Tag  type="circular" name='cost'  color="#EFF0F1">标签二</Tag>
             </div>
-            <div>
-                <h3>4.weak</h3>
-                <Tag size="small" type="blue-weak">属性标签-小标签</Tag>
-                <Tag size="small" type="cyan-weak">小标签</Tag>
-                <Tag size="small" type="turquoise-weak">小标签</Tag>
-                <Tag size="small" type="green-weak">小标签</Tag>
-                <Tag size="small" type="lime-weak">小标签</Tag>
-                <Tag size="small" type="yellow-weak">小标签</Tag>
-                <Tag size="small" type="orange-weak">小标签</Tag>
-                <Tag size="small" type="red-weak">小标签</Tag>
-                <Tag size="small" type="carmine-weak">小标签</Tag>
-                <Tag size="small" type="purple-weak">小标签</Tag>
-                <Tag size="small" type="grey-weak">小标签</Tag>
+            <div class="display-panel">
+                <h3>4.dot</h3>
+                <Tag  type="dot" name='copy'  color="#0091FF">标签一</Tag>
+                <Tag  type="dot" name='cost'  color="#F54E45">标签二</Tag>
+                <Tag  type="dot" name='start' color="#34C724">标签三</Tag>
+                <Tag  type="dot" name='link'  color="#F58300">标签四</Tag>
+                <Tag  type="dot" name='copy'  color="#8D9399">标签五</Tag>
             </div>
         </div>
     </div>
@@ -146,19 +104,35 @@
 
 <script>
     export default {
-        name: "TagView"
+        name: "TagView",
+        data () {
+            return {
+                tagBgColors: ['#E1F2FF' , '#D5F6F2', '#D9F5D6', '#FAF1D1', '#FEEAD2', '#FDE3E2', '#FDDDEF', '#ECE2FE' ,'#B2E6F2', '#EFF0F1'],
+            }
+        },
     }
 </script>
+
+<style lang="stylus" scoped>
+    .component
+        .display-panel
+            margin-bottom 40px
+        h3
+            padding 8px
+            font-size 16px
+</style>
 
 ```
 
 
 ### Attributes
 
-| 参数     | 说明  | 类型    | 默认值  | 必须    |
-| ------- | ---- | ------ | ------- | ------ |
-| size    | 标签大小 | String | big | no     |
-| type    | 标签类型 | String | grey | no     |
+| 参数     | 说明    | 类型    | 默认值   | 必须  |
+| ------- | ----    | ------  | ------- | ------|
+| size    | 标签大小 | String | big     | no     |
+| type    | 标签类型 | String | null    | no     |
+| color   | 标签颜色 | String | #E1F2FF | no     |
+| name    | 图标类型 | String |    ''   | no     |
 
 
 ### size
@@ -167,20 +141,22 @@
 | ---- | ------ | ------- | ------ |
 | big/small | String | big | no     |
 
-### type
+### type   
 
 | 可选值  | 类型    | 默认值  | 必须    |
-| ---- | ------ | ------- | ------ |
-| blue cyan turquoise green lime yellow orange red carmine purple grey | String | grey | no     |
+| ----    | ------ | ------- | ------ |
+| circular/dot| String | ''  |   no   |
 
-### type-better
+### color
 
-| 可选值  | 类型    | 默认值  | 必须    |
-| ---- | ------ | ------- | ------ |
-| blue-better cyan-better turquoise-better green-better lime-better yellow-better orange-better red-better carmine-better purple-better grey-better | String | grey-better | no     |
+| 可选值 | 说明 | 类型    | 默认值  | 必须    |
+|   ---- | ----|------ | ------- | ------ |
+| #E1F2FF #D5F6F2 #D9F5D6 #FAF1D1 #FEEAD2 #FDE3E2 #FDDDEF #ECE2FE #B2E6F2 #EFF0F1| 属性标签可选颜色 | String | #E1F2FF | no |
+| #0091FF #F54E45 #34C724 #F58300 #8D9399 | 状态标签可选颜色（点） | String | #E1F2FF | no |
 
-### type-weak
 
-| 可选值  | 类型    | 默认值  | 必须    |
-| ---- | ------ | ------- | ------ |
-| blue-weak cyan-weak turquoise-weak green-weak lime-weak yellow-weak orange-weak red-weak carmine-weak purple-weak grey-weak | String | grey-weak | no     |
+### name    
+
+| 可选值   | 类型    | 默认值  | 必须    |
+| ----    | ------   | ------- | ------ |
+| 所有icon可选 | 'String'| ''     |    no    |

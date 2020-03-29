@@ -2,12 +2,12 @@
 ### 使用说明
 
 ::: tip
-当前版本：0.8.9<br>
+当前版本：1.0.0-beta2<br>
 :::
 
 ::: warning
 注意：此UI组件库并没有专职人员测试，<br>
-若在您使用过程中发现bug，请记录下并告知PUD部门的熊双或周忠文。<br>
+若在您使用过程中发现bug，请记录下并告知客户端开发部门的熊双或周忠文。<br>
 谢谢合作。
 :::
 
@@ -16,17 +16,17 @@
 所以该文档不支持IE11及以下浏览器，请使用现代浏览器（如：Chrome）浏览该文档
 :::
 
-# persagy-ui：
+# meri-design：
 - 基于vue的ui库，gitlab地址 `ssh://git@101.254.183.198:5522/bi-web/persagy-ui-kit.git`
 
 ## 一、安装
-- `npm install -S persagy-ui`
+- `npm install -S meri-design`
 
 ## 二、全局引入
 
 ```
-    import Pui from 'persagy-ui';
-    import 'persagy-ui/dist/index.css'
+    import Pui from 'meri-design';
+    import 'meri-design/dist/index.css'
     Vue.use(Pui);
 ```
 
@@ -36,7 +36,7 @@
     [
         "component",
         {
-          "libraryName": "persagy-ui",
+          "libraryName": "meri-design",
           "camel2Dash": false,
           "libDir": "dist",
           "style": false
@@ -47,7 +47,7 @@
 ## 三、推荐-按需引入-方式一
 （不用配置主题色）
 
-- 引入组件 `import { Button } from 'persagy-ui''`
+- 引入组件 `import { Button } from 'meri-design''`
 - 安装依赖包 `npm i -D babel-plugin-component`
 
 - 在 .babelrc中的plugins里添加
@@ -56,7 +56,7 @@
     [
       "component",
       {
-        "libraryName": "persagy-ui",
+        "libraryName": "meri-design",
         "camel2Dash": false,
         "libDir": "dist",
         "styleLibrary": { "name": "theme", "base": true }
@@ -77,6 +77,36 @@
 
 ```stylus
 /* base-color -start */
+
+// base
+$white=#fff
+$black=#000
+
+// 蓝色
+// input、触发器、按钮在focus时的投影
+$box-shadow-blue=(0 0 0 2px rgba(0, 145, 255, .2))
+
+// 灰色
+// 下拉选择器、按钮盒子相关投影
+// 向上
+$box-shadow-top=(0 -2px 10px 0 rgba(31, 35, 41, .1))
+// 向下
+$box-shadow-bottom=(0 2px 10px 0 rgba(31, 35, 41, .1))
+// 向左
+$box-shadow-left=(-2px 0 10px 0 rgba(31, 35, 41, .1))
+// 向右
+$box-shadow-right=(2px 0 10px 0 rgba(31, 35, 41, .1))
+
+// 箭头相关投影
+// 向左
+$box-shadow-min-top=(-2px 2px 4px 0 rgba(31, 35, 41, .1))
+// 向下
+$box-shadow-min-bottom=(2px -2px 4px 0 rgba(31, 35, 41, .1))
+// 向左
+$box-shadow-min-left=(-2px -2px 4px 0 rgba(31, 35, 41, .1))
+// 向左
+$box-shadow-min-right=(2px 2px 4px 0 rgba(31, 35, 41, .1))
+
 // blue
 $blue-900=#004275
 $blue-800=#00518f
@@ -122,7 +152,7 @@ $green-500=#34c724
 $green-400=#62d256
 $green-300=#8ee085
 $green-200=#b7edb1
-$green-100=#eef6c6
+$green-100=#d9f5d6
 $green-50=#f0fbef
 
 // lime
@@ -210,6 +240,8 @@ $grey-100=#f5f6f7
 $grey-50=#f8f9fa
 
 /* base-color -end */
+
+/* base-color -end */
 ```
 
 2.在config里配置引入色值变量，如下
@@ -248,7 +280,7 @@ $grey-50=#f8f9fa
     [
       "component",
       {
-        "libraryName": "persagy-ui",
+        "libraryName": "meri-design",
         "camel2Dash": false,
         "libDir": "lib",
         "style": false
@@ -270,7 +302,7 @@ module.exports = {
     [
       "component",
       {
-        "libraryName": "persagy-ui",
+        "libraryName": "meri-design",
         "camel2Dash": false,
         "libDir": "dist",
         "style": false
@@ -283,8 +315,8 @@ module.exports = {
 -.在main.js中添加
 
 ```
-import Pui from "persagy-ui";
-import "persagy-ui/dist/index.css";
+import Pui from "meri-design";
+import "meri-design/dist/index.css";
 Vue.use(Pui);
 
 ```
@@ -299,7 +331,7 @@ module.exports = {
     [
       "component",
       {
-        "libraryName": "persagy-ui",
+        "libraryName": "meri-design",
         "camel2Dash": false,
         "libDir": "dist",
         "styleLibrary": { "name": "theme", "base": true }
@@ -312,7 +344,13 @@ module.exports = {
 - 在组建中引用
 
 ```
-import { Button, Toggle } from 'persagy-ui';
+import { Button, Toggle } from 'meri-design';
 components: { Button, Toggle }
 
 ```
+
+## 六、UI蓝湖链接地址
+
+- [UI规范](https://lanhuapp.com/web/#/item/project/board?pid=88b110df-5ae3-412d-88ea-cbf1c9c3b5b4)
+
+- `https://lanhuapp.com/web/#/item/project/board?pid=88b110df-5ae3-412d-88ea-cbf1c9c3b5b4`

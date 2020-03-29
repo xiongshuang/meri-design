@@ -3,12 +3,15 @@
         <PanelDoubleDay
                 v-if="range"
                 :date="date"
+                :format="format"
+                :quickSwitch="quickSwitch"
                 @change="changeDouble"
         />
         <PanelSingleDay
                 v-else
                 :date="date"
-                :calendar="calendar"
+                :format="format"
+                :quickSwitch="quickSwitch"
                 @change="changeSingle"
         />
     </div>
@@ -17,7 +20,6 @@
 <script>
     import PanelSingleDay from './depend/panelSingleDay';
     import PanelDoubleDay from './depend/panelDoubleDay';
-
 
     export default {
         name: "PickerDay",
@@ -41,8 +43,13 @@
                 type: Boolean,
                 default: false
             },
-            // 是否显示日历图标
-            calendar: {
+            // 是否显示时分秒 可选值[hms, hm]
+            format: {
+                type: String,
+                default: ''
+            },
+            // 快速切换时间
+            quickSwitch: {
                 type: Boolean,
                 default: false
             }

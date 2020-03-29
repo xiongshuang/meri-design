@@ -15,3 +15,5 @@ expressServer.js
 *.ntvs*
 *.njsproj
 *.sln
+
+ignorecase=false

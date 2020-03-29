@@ -27,7 +27,7 @@
              */
             data: {
                 type: Array,
-                default: []
+                default: () => []
             }
         },
         methods: {

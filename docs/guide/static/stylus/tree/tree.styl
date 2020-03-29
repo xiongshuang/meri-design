@@ -1,0 +1,64 @@
+.p-tree
+  width 100%
+  //min-width 224px
+  max-width 280px
+  overflow-x hidden
+  font-size 0
+.p-tree-node
+  width 100%
+.p-tree-node-content
+  position relative
+  margin-top 4px
+  margin-bottom 4px
+  width 100%
+  cursor pointer
+  &:hover
+    background-color $grey-200
+  &.p-tree-node-content-checked
+    background-color $blue-100
+    .p-tree-node-check
+      .p-tree-node-title
+        .p-tree-node-name
+          color $blue-500
+.p-tree-svg
+  display inline-block
+  vertical-align middle
+  margin-right 8px
+  width 16px
+  height @width
+  line-height @width
+  text-align center
+  .p-tree-icon-svg
+    vertical-align text-bottom
+    transform rotate(90deg)
+    transition transform .3s
+  .p-tree-icon-rotate
+    transform rotate(180deg)
+.p-tree-node-check
+  display inline-block
+  vertical-align middle
+  width calc(100% - 24px)
+  .p-tree-node-title
+    position relative
+    display inline-block
+    vertical-align middle
+    user-select none
+    width calc(100% - 20px)
+    .p-tree-node-name
+      width 100%
+      max-width 160px
+      height 32px
+      line-height @height
+      white-space nowrap
+      text-overflow ellipsis
+      overflow hidden
+      font-size 14px
+      color $grey-900
+.p-tree-node-content-disabled
+  background-color $grey-200 !important
+  //pointer-events none
+  cursor not-allowed
+  .p-tree-node-name
+    color $grey-400 !important
+.p-tree-child
+  width 100%

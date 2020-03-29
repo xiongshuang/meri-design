@@ -8,8 +8,6 @@ import store from './store';
 import App from './App';
 import Components from './entry/multiple';
 
-
-
 Vue.use(Components);
 
 
@@ -20,4 +18,4 @@ new Vue({
     router,
     store,
     render: h => h(App)
-}).$mount('#persagyUi');
+}).$mount('#meriDesign');

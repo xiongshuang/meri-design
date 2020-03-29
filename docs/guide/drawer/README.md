@@ -3,24 +3,50 @@
 <template>
     <div class="Button">
         <div class="component component-padding">
-            <h1>Drawer组件</h1>
+            <h1 @click="drawerShow">Drawer组件</h1>
             <Button type="primary" @click="drawerShow">drawerShow</Button>
             <Drawer
                     :show="drawerStatus"
                     title="抽屉"
                     :focus="true"
-                    :loading="iconLoading"
-                    @changeLoading="changeLoading"
-                    :btnShow="true"
                     :bottom="true"
-                    @changeStatus="changeStatus"
-                    @confirm="drawerConfirm"
+                    @close="changeStatus"
+                    :loadingMore="loadingMore"
+                    @getMore="getMore"
             >
-                <div style="width: 500px;font-size: 20px">
-                    123
-                    456
-                    789
-                </div>
+                <template slot="content">
+                    <div style="width: 500px;font-size: 20px">
+                        123
+                        456
+                        789
+                        <div style="font-size: 16px;" :style="{height: height+'px'}">
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                        </div>
+                    </div>
+                </template>
+                <template slot="handle">
+                    <div>
+                        <Button type="primary" @click="drawerConfirm">确定</Button>
+                        <Button type="default" @click="drawerCancel">取消</Button>
+                    </div>
+                </template>
             </Drawer>
         </div>
     </div>
@@ -32,7 +58,8 @@
         data() {
             return {
                 drawerStatus: false,
-                iconLoading: false
+                loadingMore: false,
+                height: 1000
             }
         },
         methods: {
@@ -52,6 +79,20 @@
             drawerConfirm() {
                 console.log('alertConfirm')
             },
+            drawerCancel() {
+                console.log('drawerCancel');
+                this.drawerStatus=false;
+            },
+            getMore() {
+                console.log('1::', this.loadingMore);
+                this.loadingMore=true;
+                console.log('2::', this.loadingMore);
+                setTimeout(() => {
+                    this.loadingMore=false;
+                    this.height=this.height+100;
+                }, 3000)
+                console.log('3::', this.loadingMore);
+            }
         }
     }
 </script>
@@ -60,24 +101,50 @@
 <template>
     <div class="Button">
         <div class="component component-padding">
-            <h1>Drawer组件</h1>
+            <h1 @click="drawerShow">Drawer组件</h1>
             <Button type="primary" @click="drawerShow">drawerShow</Button>
             <Drawer
                     :show="drawerStatus"
                     title="抽屉"
                     :focus="true"
-                    :loading="iconLoading"
-                    @changeLoading="changeLoading"
-                    :btnShow="true"
                     :bottom="true"
-                    @changeStatus="changeStatus"
-                    @confirm="drawerConfirm"
+                    @close="changeStatus"
+                    :loadingMore="loadingMore"
+                    @getMore="getMore"
             >
-                <div style="width: 500px;font-size: 20px">
-                    123
-                    456
-                    789
-                </div>
+                <template slot="content">
+                    <div style="width: 500px;font-size: 20px">
+                        123
+                        456
+                        789
+                        <div style="font-size: 16px;" :style="{height: height+'px'}">
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                            <br><br><br><br><br><br><br><br>
+                        </div>
+                    </div>
+                </template>
+                <template slot="handle">
+                    <div>
+                        <Button type="primary" @click="drawerConfirm">确定</Button>
+                        <Button type="default" @click="drawerCancel">取消</Button>
+                    </div>
+                </template>
             </Drawer>
         </div>
     </div>
@@ -89,7 +156,8 @@
         data() {
             return {
                 drawerStatus: false,
-                iconLoading: false
+                loadingMore: false,
+                height: 1000
             }
         },
         methods: {
@@ -109,6 +177,20 @@
             drawerConfirm() {
                 console.log('alertConfirm')
             },
+            drawerCancel() {
+                console.log('drawerCancel');
+                this.drawerStatus=false;
+            },
+            getMore() {
+                console.log('1::', this.loadingMore);
+                this.loadingMore=true;
+                console.log('2::', this.loadingMore);
+                setTimeout(() => {
+                    this.loadingMore=false;
+                    this.height=this.height+100;
+                }, 3000)
+                console.log('3::', this.loadingMore);
+            }
         }
     }
 </script>
@@ -122,11 +204,9 @@
 | show    | 侧拉窗显示状态 | Boolean | false | yes     |
 | title    | 标题 | String | '' | no     |
 | focus    | 开启鼠标失去焦点自动关闭 | Boolean | false | no     |
-| loading    | 是否开启loading效果 | Boolean | false | no     |
-| @changeLoading    | 该表loading | Function | false | no     |
-| btnShow    | 底部按钮是否显示 | Boolean | false | no     |
 | bottom    | 底部按钮是否固定在底部 | Boolean | false | no     |
-| loadingMore    | 加载更多loading | Boolean | false | no     |
+| @close    | 关闭回调 | Function | -- | yes     |
+| loadingMore    | 加载更多 | Boolean | false | no     |
 | @getMore    | 触底-加载更多数据回调 | Function | -- | no     |
-| @changeStatus    | 控制侧拉窗显示关闭回调 | Function | -- | no     |
-| @confirm    | 确定按钮点击回调 | Function | -- | no     |
+| slot    | content | 主内容 | -- | no     |
+| slot    | handle | 底部内容 | -- | no     |

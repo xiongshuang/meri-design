@@ -64,12 +64,12 @@
             z-index 1
             content ''
     .p-radio-uncheck
-        background-color #fff
+        background-color $white
         border-color $grey-400
         &:hover
             border-color $blue-500
     .p-radio-checked
-        background-color #fff
+        background-color $white
         border-color $blue-500
         &::after
             top 3px

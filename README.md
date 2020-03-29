@@ -1,5 +1,5 @@
-# persagy-ui：
-- 基于vue的ui库，github地址 `ssh://git@101.254.183.198:5522/bi-web/persagy-ui-kit.git`
+# meri-design：
+- 基于vue的ui库，github地址 `ssh://git@101.254.183.198:5522/xiongshuang/meri-design.git`
 
 ## config
 - 开发预览 `webpack.config.js`
@@ -10,12 +10,12 @@
 
 
 ## 安装
-- `npm install -S persagy-ui`
+- `npm install -S meri-design`
 
 ## 全局引入
 ```
-    import Pui from 'persagy-ui';
-    import 'persagy-ui/dist/index.css'；
+    import Pui from 'meri-design';
+    import 'meri-design/dist/index.css'；
     
     Vue.use(Pui);
 ```
@@ -25,7 +25,7 @@
     [
           "component",
           {
-            "libraryName": "persagy-ui",
+            "libraryName": "meri-design",
             "camel2Dash": false,
             "libDir": "dist",
             "style": false
@@ -34,14 +34,14 @@
 ```
 
 ## 按需引入
-- 引入组件 `import { Button } from 'persagy-ui''`
+- 引入组件 `import { Button } from 'meri-design''`
 - 安装依赖包   `npm i -D babel-plugin-component`
 - 在 .babelrc中的plugins里添加
 ```json
     [
           "component",
           {
-            "libraryName": "persagy-ui",
+            "libraryName": "meri-design",
             "camel2Dash": false,
             "libDir": "dist",
             "styleLibrary": { "name": "theme", "base": true }

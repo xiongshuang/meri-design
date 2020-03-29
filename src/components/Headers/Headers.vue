@@ -2,15 +2,15 @@
     <div class="p-headers">
         <div class="p-headers-left">
             <!-- @slot-左侧内容 -->
-            <slot name="left"></slot>
+            <slot name="left" />
         </div>
         <div class="p-headers-middle">
             <!-- @slot-居中内容 -->
-            <slot name="middle"></slot>
+            <slot name="middle" />
         </div>
         <div class="p-headers-right">
             <!-- @slot-右侧内容 -->
-            <slot name="right"></slot>
+            <slot name="right" />
         </div>
     </div>
 </template>

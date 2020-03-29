@@ -56,7 +56,7 @@
             data: {
                 type: Array,
                 default: () => []
-            }
+			}
         },
         computed: {
             treeData: {

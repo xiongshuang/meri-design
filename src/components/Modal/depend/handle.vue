@@ -61,17 +61,3 @@
         }
     }
 </script>
-
-<style lang="stylus">
-
-.p-modal-handle
-  position absolute
-  right 0
-  bottom 0
-  //background-color #fff
-  padding 20px 32px
-  //box-shadow 0 -2px 10px 0 rgba(31,35,41,.1)
-  width 100%
-  text-align right
-
-</style>

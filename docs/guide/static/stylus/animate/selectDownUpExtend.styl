@@ -1,0 +1,13 @@
+/*CSS动画*/
+@keyframes selectDownUpExtend
+  from
+    transform translateY(-32px)
+    opacity 0
+  to
+    transform translateY(0)
+    opacity 1
+
+.selectDownUpExtend-enter-active
+  animation selectDownUpExtend .3s
+.selectDownUpExtend-leave-active
+  animation selectDownUpExtend .3s reverse

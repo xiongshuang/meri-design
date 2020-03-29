@@ -11,8 +11,8 @@ router.get('/',function (req, res, next) {
 
 app.use(router);
 
-app.use(express.static('./persagy-ui'))
-// app.use(express.static('./docs/dist'));
+// app.use(express.static('./meri-design'))
+app.use(express.static('./docs/dist'));
 
 const open=require('opn'); // 启动成功打开网页
 const port=3550; // 端口号

@@ -4,12 +4,14 @@
                 v-if="range"
                 :date="date"
                 :sort="sort"
+                :quickSwitch="quickSwitch"
                 @change="changeDouble"
         />
         <PanelSingleWeek
                 v-else
                 :date="date"
                 :sort="sort"
+                :quickSwitch="quickSwitch"
                 @change="changeSingle"
         />
     </div>
@@ -45,6 +47,11 @@
              * @value 【false-时间点（默认值），true-时间段】
              */
             range: {
+                type: Boolean,
+                default: false
+            },
+            // 快速切换时间
+            quickSwitch: {
                 type: Boolean,
                 default: false
             }

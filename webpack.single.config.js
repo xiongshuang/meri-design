@@ -9,9 +9,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const VueLoaderPlugin = require('vue-loader/lib/plugin'); // vue加载器
 const PostStylus=require('poststylus'); // stylus加前缀
-const HappyPack = require('happypack'); // 分块打包
-const os=require('os');
-const happyThreadPool=HappyPack.ThreadPool({ size: os.cpus().length });
 
 const EntryObj=require('./src/entry/single.js');
 
@@ -24,6 +21,7 @@ const TimeFn=require('./get_time');
  */
 const cssConfig=[
     MiniCssExtractPlugin.loader,
+    'thread-loader',
     {
         loader: 'css-loader',
         options: {
@@ -34,6 +32,7 @@ const cssConfig=[
     ]
     ,stylusConfig=[
         MiniCssExtractPlugin.loader,
+        'thread-loader',
         {
             loader: 'css-loader',
             options: {
@@ -78,7 +77,9 @@ const config={
             },
             {
                 test: /\.vue$/,
-                use: {
+                use: [
+                    'thread-loader',
+                    {
                     loader: 'vue-loader',
                     options: {
                         loaders:{
@@ -87,11 +88,11 @@ const config={
                         },
                         preserveWhitespace: false // 不要留空白
                     }
-                }
+                }]
             },
             {
                 test: /\.js$/,
-                use: 'happypack/loader?id=js_vue',
+                use: ['thread-loader', 'babel-loader'],
                 exclude: file => (
                     /node_modules/.test(file) &&
                     !/\.vue\.js/.test(file)
@@ -109,11 +110,6 @@ const config={
                         limit: 8192, // 小于8k将图片转换成base64
                         name: '[name].[ext]?[hash:8]',
                         outputPath: 'images/'
-                    }
-                },{
-                    loader: 'image-webpack-loader', // 图片压缩
-                    options: {
-                        bypassOnDebug: true
                     }
                 }]
             },
@@ -147,7 +143,7 @@ const config={
         ]
     },
     plugins: [
-        new webpack.BannerPlugin(`@xs ${TimeFn()}`),
+        new webpack.BannerPlugin(`@meri-design ${TimeFn()}`),
         new VueLoaderPlugin(), // vue加载器
         new OptimizeCssAssetsPlugin({
             assetNameRegExp: /\.css$/g,       //一个正则表达式，指示应优化/最小化的资产的名称。提供的正则表达式针对配置中ExtractTextPlugin实例导出的文件的文件名运行，而不是源CSS文件的文件名。默认为/\.css$/g
@@ -167,14 +163,6 @@ const config={
         new MiniCssExtractPlugin({ // 分离css
             filename: 'theme/[name].css'
             // filename: '[name]/style.css'
-        }),
-        new HappyPack({
-            id: 'js_vue', // id值，与loader配置项对应
-            loaders: [{
-                loader: 'babel-loader'
-            }], // 用什么loader处理
-            threadPool: happyThreadPool, // 共享进程池
-            verbose: true //允许 HappyPack 输出日志
         }),
         new CopyWebpackPlugin([{
             from:'./src/components', // 需要拷贝的组件资源目录地址，这里只做打包单个组件的公共样式拷贝

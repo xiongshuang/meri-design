@@ -1,0 +1,20 @@
+/*CSS动画*/
+@keyframes opacityScaleIn
+  from
+    opacity 0
+    transform scale(0)
+  to
+    opacity 1
+    transform scale(1)
+@keyframes opacityScaleOut
+  from
+    opacity 1
+    transform scale(1)
+  to
+    opacity 0
+    transform scale(0)
+
+.opacityScale-enter-active
+  animation opacityScaleIn .3s ease-out
+.opacityScale-leave-active
+  animation opacityScaleOut .15s ease-in

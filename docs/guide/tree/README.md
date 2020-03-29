@@ -320,6 +320,7 @@
 | id    | id | String | '' | Yes     |
 | name   | name | String | '' | Yes     |
 | open   | 是否展开子项 | Boolean | false | Yes     |
+| disabled   | 是否禁用 | Boolean | false | Yes     |
 | checked   | 是否选中（可选值：uncheck/checked/notNull） | String | uncheck | Yes     |
 
 ::: tip

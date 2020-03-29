@@ -9,9 +9,8 @@ const WebpackBar = require('webpackbar');
 
 const VueLoaderPlugin = require('vue-loader/lib/plugin'); // vue加载器
 const PostStylus=require('poststylus'); // stylus加前缀
-const HappyPack = require('happypack'); // 分块打包
-const os=require('os');
-const happyThreadPool=HappyPack.ThreadPool({ size: os.cpus().length });
+
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin'); // 为模块提供中间缓存，缓存默认的存放路径是: node_modules/.cache/hard-source
 
 /**
  * 判断是生产环境还是开发环境
@@ -58,6 +57,7 @@ console.log(
  */
 const cssConfig=[
     isProd?MiniCssExtractPlugin.loader:'vue-style-loader',
+    'thread-loader',
     {
         loader: 'css-loader',
         options: {
@@ -68,6 +68,7 @@ const cssConfig=[
 ]
     ,stylusConfig=[
         isProd?MiniCssExtractPlugin.loader:'vue-style-loader',
+        'thread-loader',
         {
             loader: 'css-loader',
             options: {
@@ -106,11 +107,14 @@ const config={
             },
             {
                 test: /\.styl(us)?$/,
-                use: stylusConfig
+                use: stylusConfig,
+                include: [path.resolve(__dirname, 'src')]
             },
             {
                 test: /\.vue$/,
-                use: {
+                use: [
+                    'thread-loader',
+                    {
                     loader: 'vue-loader',
                     options: {
                         loaders:{
@@ -119,34 +123,33 @@ const config={
                         },
                         preserveWhitespace: false // 不要留空白
                     }
-                }
+                }],
+                include: [path.resolve(__dirname, 'src')]
             },
             {
                 test: /\.js$/,
-                use: 'happypack/loader?id=js_vue',
+                use: ['thread-loader', 'cache-loader', `babel-loader?cacheDirectory=${!isProd}`],
                 exclude: file => (
                     /node_modules/.test(file) && !/\.vue\.js/.test(file)
                 )
             },
             {
                 test: /\.svg$/,
-                loader: ['babel-loader', 'vue-svg-loader']
+                use: ['thread-loader', 'babel-loader', 'vue-svg-loader'],
+                include: [path.resolve(__dirname, 'src')]
             },
             {
                 test: /\.(png|jpe?g|gif|bmp)$/,
-                use: [{
+                use: [
+                    {
                     loader: 'url-loader',
                     options: { // 配置图片编译路径
                         limit: 8192, // 小于8k将图片转换成base64
                         name: '[name].[ext]?[hash:8]',
                         outputPath: 'images/'
                     }
-                },{
-                    loader: 'image-webpack-loader', // 图片压缩
-                    options: {
-                        bypassOnDebug: true
-                    }
-                }]
+                }],
+                include: [path.resolve(__dirname, 'src')]
             },
             {
                 test: /\.html$/,
@@ -157,7 +160,7 @@ const config={
                     }
                 }]
             },
-            {test: /\.(mp4|ogg)$/,use: ['file-loader']},
+            {test: /\.(mp4|ogg)$/,use: ['file-loader'], include: [path.resolve(__dirname, 'src')]},
             {
                 test:/\.(woff2?|eot|ttf|otf)(\?.*)?$/,
                 loader:'url-loader',
@@ -179,22 +182,16 @@ const config={
         ]
     },
     plugins: [
-        new webpack.BannerPlugin(`@xs ${TimeFn()}`),
+        new webpack.BannerPlugin(`@meri-design ${TimeFn()}`),
+        new HardSourceWebpackPlugin(),
         new VueLoaderPlugin(), // vue加载器
-        new HappyPack({
-            id: 'js_vue', // id值，与loader配置项对应
-            loaders: [{
-                loader: `babel-loader?cacheDirectory=${!isProd}`
-            }], // 用什么loader处理
-            threadPool: happyThreadPool, // 共享进程池
-            verbose: true //允许 HappyPack 输出日志
-        }),
         new webpack.LoaderOptionsPlugin({ // stylus加前缀
             options: {
                 stylus: {
                     use: [
-                        PostStylus(['autoprefixer']),
-                    ]
+                        PostStylus(['autoprefixer'])
+                    ],
+                    include: [path.resolve(__dirname, 'src')]
                 }
             }
         }),
@@ -260,16 +257,16 @@ if(isProd){
         , compress: true // 开启Gzip压缩
         // , host: 'localhost' // 设置服务器的ip地址，默认localhost
         , host: get_ip // 设置服务器的ip地址，默认localhost
-        , port: 3001 // 端口号
+        , port: 3002 // 端口号
         , open: true // 自动打开浏览器
         , hot: true
         , overlay: { // 当出现编译器错误或警告时，就在网页上显示一层黑色的背景层和错误信息
             errors: true
         },
         disableHostCheck: true //  不检查主机
-        ,historyApiFallback: { // 当使用 HTML5 History API 时，任意的 404 响应都可能需要被替代为 /
-            rewrites: [{ from: /./, to: '/' }]
-        }
+        // ,historyApiFallback: { // 当使用 HTML5 History API 时，任意的 404 响应都可能需要被替代为 /
+        //     rewrites: [{ from: /./, to: '/' }]
+        // }
     };
 }
 

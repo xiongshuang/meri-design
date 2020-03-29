@@ -1,10 +1,15 @@
-### PickerYear 年选择 示例-开发中...
+### PickerYear 年选择 内侧中...
 
 <template>
     <div class="component component-padding">
         <h1>PickerYear组件</h1>
-        <PickerYear :date="dateDouble" :range="true" @change="dateChangeDouble" />
         <PickerYear :date="dateSingle" @change="dateChangeSingle" />
+        <br><br>
+        <PickerYear :date="dateSingle" :quickSwitch="true" @change="dateChangeSingle" />
+        <br><br><br><br><br>
+        <PickerYear :date="dateDouble" :range="true" @change="dateChangeDouble" />
+        <br><br>
+        <PickerYear :date="dateDouble" :quickSwitch="true" :range="true" @change="dateChangeDouble" />
     </div>
 </template>
 
@@ -15,8 +20,8 @@
             return {
                 // dateSingle: '2020',
                 dateSingle: '',
-                // dateDouble: ''
-                dateDouble: '2015-2020'
+                dateDouble: ''
+                // dateDouble: '2015-2020'
             }
         },
         methods: {
@@ -32,20 +37,18 @@
     }
 </script>
 
-<style lang="stylus" scoped>
-
-.component-padding
-    padding-bottom 200px !important
-    width 240px
-
-</style>
-
 ```vue
 <template>
     <div class="component component-padding">
         <h1>PickerYear组件</h1>
-        <PickerYear :date="dateDouble" :range="true" @change="dateChangeDouble" />
         <PickerYear :date="dateSingle" @change="dateChangeSingle" />
+        <br><br>
+        <PickerYear :date="dateSingle" :quickSwitch="true" @change="dateChangeSingle" />
+
+        <br><br><br><br><br>
+        <PickerYear :date="dateDouble" :range="true" @change="dateChangeDouble" />
+        <br><br>
+        <PickerYear :date="dateDouble" :quickSwitch="true" :range="true" @change="dateChangeDouble" />
     </div>
 </template>
 
@@ -56,8 +59,8 @@
             return {
                 // dateSingle: '2020',
                 dateSingle: '',
-                // dateDouble: ''
-                dateDouble: '2015-2020'
+                dateDouble: ''
+                // dateDouble: '2015-2020'
             }
         },
         methods: {

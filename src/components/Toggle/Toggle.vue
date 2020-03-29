@@ -61,11 +61,11 @@
             position absolute
             top 2px
             display block
-            background-color #fff
+            background-color $white
             width 18px
             height @width
             border-radius (@height/2)
-            box-shadow 0 2px 8px 0 rgba(31,35,41,.1)
+            box-shadow $box-shadow-bottom
             transition right .3s
             z-index 2
         input

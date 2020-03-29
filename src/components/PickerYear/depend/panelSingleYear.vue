@@ -1,15 +1,31 @@
 <template>
     <div class="p-picker-child">
         <div
-                class="p-picker-input"
-                @click="pickerBoxShow"
+                :class="[
+                    'p-picker-input', 'p-picker-input-trigger', 'p-picker-input-single',
+                    quickSwitch?'p-picker-input-triangle':'p-picker-input-normal'
+                ]"
                 @mouseenter="pickerClearShow"
                 @mouseleave="pickerClearHide"
         >
+            <i
+                    v-if="quickSwitch"
+                    :class="['p-picker-triangle', 'p-picker-triangle-left', !selectedDate&&'p-picker-triangle-disabled']"
+                    @click="quickSort('left')"
+            ><TrianglePickerLeft /></i>
             <section
-                    :class="['p-picker-input-tip', selectedDate&&'p-picker-input-values']"
-            >{{selectedDate?selectedDate:'请选择日期'}}</section>
-            <ClearSvg v-show="clearStatus" class="p-picker-clear-svg" @click.stop="clearTime" />
+                    :class="['p-picker-input-tip-single', selectedDate?'p-picker-input-values':'p-picker-input-tip']"
+                    @click="pickerBoxShow"
+            >{{selectedDate?selectedDate:'选择日期'}}</section>
+            <section v-if="!quickSwitch" class="p-picker-svg-box">
+                <ClearSvg class="p-picker-clear-svg" v-if="clearStatus" @click.stop="clearTime" />
+                <CalendarSvg v-else />
+            </section>
+            <i
+                    v-if="quickSwitch"
+                    :class="['p-picker-triangle', 'p-picker-triangle-right', !selectedDate&&'p-picker-triangle-disabled']"
+                    @click="quickSort('right')"
+            ><TrianglePickerRight /></i>
         </div>
         <transition name="opacityTop">
             <!--
@@ -25,19 +41,16 @@
             >
                 <div class="p-picker-main-item-box">
                     <div class="p-picker-main-item-input-box">
-                        <section class="p-picker-input p-picker-input-values-default">
+                        <section class="p-picker-input-alert">
                             <article
-                                    :class="[yearSelected&&'p-picker-input-values']"
-                            >{{yearSelected?yearSelected:'请选择日期'}}</article>
+                                    :class="[yearSelected?'p-picker-input-values':'p-picker-input-tip']"
+                            >{{yearSelected?yearSelected:'选择日期'}}</article>
                         </section>
                     </div>
                     <div class="p-picker-main-item">
-                        <YearSelect
-                                :yearNow="yearNow"
-                                :yearActive="yearActive"
-                                :yearsArray="yearsArray"
-                                @prevYear="prevYear"
-                                @nextYear="nextYear"
+                        <SingleYear
+                                ref="singleYear"
+                                :date="date"
                                 @change="changeDate"
                         />
                     </div>
@@ -52,18 +65,23 @@
 </template>
 
 <script>
-    import CountYear from '../../static/utils/datePicker/CountYear';
 
-    import YearSelect from './year';
+    import SingleYear from './singleYear';
     import Button from '../../Button';
 
     import ClearSvg from '../../static/iconSvg/clear2.svg';
+    import CalendarSvg from '../../static/iconSvg/calendar.svg';
+    import TrianglePickerLeft from '../../static/iconSvg/triangle_picker_left.svg';
+    import TrianglePickerRight from '../../static/iconSvg/triangle_picker_right.svg';
     export default {
         name: "panelSingleYear",
         components: {
-            YearSelect,
+            SingleYear,
             Button,
-            ClearSvg
+            ClearSvg,
+            CalendarSvg,
+            TrianglePickerLeft,
+            TrianglePickerRight
         },
         props: {
             /**
@@ -72,6 +90,11 @@
             date: {
                 type: String,
                 default: ''
+            },
+            // 快速切换时间
+            quickSwitch: {
+                type: Boolean,
+                default: false
             }
         },
         data() {
@@ -82,59 +105,30 @@
                 clearStatus: false, // 关闭按钮
                 selectedDate: '', // 选中的时间
 
-                yearNow: '', // 当前年
-
-                // 活动的年月日
-                yearActive: '',
-
-                yearSelected: '', // 选择的年
-
-                yearsArray: [] // 日列表
+                yearSelected: '' // 选择的年
+            }
+        },
+        watch: {
+            date(n, o) {
+                if (n === o) return;
+                this.dateFormat(n);
             }
         },
         created() {
-            // 初始化日期对象
-            this.init();
+            this.dateFormat(this.date);
         },
         methods: {
+            dateFormat(date) {
+                this.selectedDate=date;
+                this.yearSelected=date;
+                this.changeBtnType(date);
+            },
             /**
              * 改变按钮状态
              */
             changeBtnType(str) {
                 if (str) this.btnType='primary';
                 else this.btnType='disabled';
-            },
-            /**
-             * 初始化日期对象
-             */
-            init() {
-                this.countYear=new CountYear(this.date); // 当前计算年的对象
-                this.yearsArray=this.countYear.getYearsArray();
-                this.yearNow=this.countYear.countNowYear(); // 获取当前年
-
-                this.setDate(this.date);
-            },
-            /**
-             * 设置选择的年月日
-             * @param date String 2019.10.31
-             */
-            setDate(date) {
-                this.changeBtnType(date);
-                this.setYearActive(this.yearsArray);
-                this.selectedDate=date;
-                this.yearSelected=date;
-                this.changeYearsArray(date);
-            },
-            /**
-             * 改变选中状态
-             * @param year
-             */
-            changeYearsArray(year) {
-                this.yearsArray=this.yearsArray.map(d => {
-                    if (d.year===year) d.selected='selected';
-                    else d.selected='';
-                    return d;
-                })
             },
             /**
              * 显示清除按钮
@@ -175,7 +169,7 @@
              */
             pickerBoxShow() {
                 this.pickerBoxStatus=true;
-                this.init();
+                // this.init();
             },
             /**
              * 关闭时间选择盒子
@@ -184,46 +178,23 @@
                 if (this.pickerBoxStatus && this.blurStatus) this.pickerBoxStatus=false;
             },
             /**
-             * 设置yearActive
-             */
-            setYearActive(arr) {
-                const ly=arr[0].year, ry=arr[arr.length-1].year;
-                this.yearActive=ly+'年'+' - '+ry+'年';
-            },
-            /**
-             * 切换日期
-             * @param date String '2019'
-             */
-            switchDate(date) {
-                this.countYear=new CountYear(date); // 当前计算天的对象
-                this.yearsArray=this.countYear.getYearsArray().map(d => {
-                    if (d.year===this.yearSelected) d.selected='selected';
-                    return d;
-                });
-                this.setYearActive(this.yearsArray);
-            },
-            /**
-             * 上一组年
-             */
-            prevYear() {
-                const date=(this.yearsArray.shift().year-1).toString();
-                this.switchDate(date);
-            },
-            /**
-             * 下一组年
-             */
-            nextYear() {
-                const date=(parseInt(this.yearsArray.pop().year)+12).toString();
-                this.switchDate(date);
-            },
-            /**
              * 点击日期
              * @param year
              */
             changeDate(year) {
                 this.yearSelected=year;
                 this.btnType='primary';
-                this.changeYearsArray(year);
+            },
+            // 快速选择-设置时间 flag【left，right】
+            quickSort(flag) {
+                const ys=Number(this.yearSelected);
+                const selectedDate=((flag==='left'?ys-1:ys+1)).toString();
+                this.yearSelected=selectedDate;
+                this.selectedDate=selectedDate;
+                const singleYear=this.$refs.singleYear;
+                const ya=singleYear.yearsArray;
+                if (!ya.some(d => d.year === selectedDate)) singleYear.init(selectedDate);
+                this.$emit('change', selectedDate);
             },
             /**
              * 确定

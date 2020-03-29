@@ -1,0 +1,15 @@
+/*CSS动画*/
+@keyframes slideInDownUi
+  from
+    pointer-events none
+    opacity 0
+    transform translate3d(0, -30px, 0)
+  to
+    pointer-events none
+    opacity 1
+    transform translate3d(0, 0, 0)
+
+.slideDownUpUi-enter-active
+  animation slideInDownUi .3s
+.slideDownUpUi-leave-active
+  animation slideInDownUi .3s reverse

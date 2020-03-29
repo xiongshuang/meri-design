@@ -25,48 +25,62 @@
                     @close="modalClose"
                     @confirm="modalConfirm"
             >
-                <div style="font-size: 20px; width: 600px">
-                    123
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    456
-                </div>
+                <template #content>
+                    <div style="font-size: 20px; width: 600px">
+                        123
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br>
+                        <br><br><br><br>
+<!--                        <br><br><br><br><br><br><br><br>-->
+                        456
+                    </div>
+                </template>
+                <template #handle>
+                    <Button @click="tap" type="default">default</Button>
+                    <Button @click="tap" type="primary">primary</Button>
+                </template>
             </Modal>
             <Modal
                     :show="modalStatusFull"
-                    title="弹窗提示"
+                    title="弹窗提示Full"
                     :iconLoading="true"
                     mode="full"
                     @close="modalClose"
                     @confirm="modalConfirm"
             >
-                <div style="font-size: 20px; width: 600px">
-                    123
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    <br><br><br><br><br><br><br><br>
-                    456
-                </div>
+                <template #content>
+                    <div style="font-size: 20px; width: 600px">
+                        123
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br><br><br><br><br>
+                        <br><br><br><br><br><br><br><br>
+                        456
+                    </div>
+                </template>
+                <template #handle>
+                    <Button @click="tap" type="default">default</Button>
+                    <Button @click="tap" type="primary">primary</Button>
+                </template>
             </Modal>
             <Modal
                     :show="modalStatusSmall"
@@ -77,31 +91,12 @@
                     @close="modalClose"
                     @confirm="modalConfirm"
             >
-                <div style="font-size: 20px;">
-                    123
-                    456
-                </div>
+                <template #content>
+                    <div style="font-size: 14px;">
+                        提示内容提示内容
+                    </div>
+                </template>
             </Modal>
-            <div style="font-size: 16px;">
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
-            </div>
         </div>
     </div>
 </template>
@@ -134,6 +129,9 @@
             modalConfirm() {
                 console.log('alertConfirm')
             },
+            tap () {
+                console.log('click')
+            }
         }
     }
 </script>

@@ -1,15 +1,33 @@
 <template>
     <div class="p-picker-child">
         <div
-                class="p-picker-input"
-                @click="pickerBoxShow"
+                :class="[
+                    'p-picker-input', 'p-picker-input-trigger', 'p-picker-input-single',
+                    quickSwitch?'p-picker-input-triangle':'p-picker-input-normal'
+                ]"
                 @mouseenter="pickerClearShow"
                 @mouseleave="pickerClearHide"
         >
+            <i
+                    v-if="quickSwitch"
+                    :class="['p-picker-triangle', 'p-picker-triangle-left', !selectedDate&&'p-picker-triangle-disabled']"
+                    @click="quickSort('left')"
+            ><TrianglePickerLeft /></i>
             <section
-                    :class="['p-picker-input-tip', thTextSelected&&'p-picker-input-values']"
-            >{{thTextSelected?thTextSelected:'请选择日期'}}</section>
-            <ClearSvg v-show="clearStatus" class="p-picker-clear-svg" @click.stop="clearTime" />
+                    :class="['p-picker-input-tip-single', thTextSelected?'p-picker-input-values':'p-picker-input-tip']"
+                    @click="pickerBoxShow"
+            >{{thTextSelected?thTextSelected:'选择日期'}}</section>
+            <section v-if="!quickSwitch" class="p-picker-svg-box">
+                <ClearSvg class="p-picker-clear-svg" v-if="clearStatus" @click.stop="clearTime" />
+                <CalendarSvg v-else />
+            </section>
+            <i v-if="quickSwitch"
+               :class="[
+                   'p-picker-triangle', 'p-picker-triangle-right',
+                    !selectedDate&&'p-picker-triangle-disabled'
+               ]"
+               @click="quickSort('right')"
+            ><TrianglePickerRight /></i>
         </div>
         <transition name="opacityTop">
             <!--
@@ -25,14 +43,28 @@
             >
                 <div class="p-picker-main-item-box">
                     <div class="p-picker-main-item-input-box">
-                        <section class="p-picker-input p-picker-input-values-default">
+                        <section class="p-picker-input-alert">
                             <article
-                                    :class="[thTextSelected&&'p-picker-input-values']"
+                                    :class="[thTextSelected?'p-picker-input-values':'p-picker-input-tip']"
                             >{{thTextSelected?thTextSelected:'请选择日期'}}</article>
                         </section>
                     </div>
                     <div class="p-picker-main-item">
+                        <SingleYear
+                                ref="singleYear"
+                                v-show="panelYear"
+                                date=""
+                                @change="panelYearChangeDate"
+                        />
+                        <SingleMonth
+                                ref="singleMonth"
+                                v-show="panelMonth"
+                                date=""
+                                @change="panelMonthChangeDate"
+                                @panelYearHandle="panelYearHandle"
+                        />
                         <WeekSelect
+                                v-show="!panelYear&&!panelMonth"
                                 :yearNow="yearNow"
                                 :yearActive="yearActive"
                                 :monthNow="monthNow"
@@ -43,12 +75,14 @@
                                 @prevMonth="prevMonth"
                                 @nextMonth="nextMonth"
                                 @change="changeDate"
+                                @panelYearHandle="panelYearHandle"
+                                @panelMonthHandle="panelMonthHandle"
                         />
                     </div>
                 </div>
 
                 <div class="p-picker-main-handle">
-                    <Button :type="btnType" size="small" disabled @click="pickerConfirm">确定</Button>
+                    <Button :type="btnType" size="small" @click="pickerConfirm">确定</Button>
                 </div>
             </div>
         </transition>
@@ -57,21 +91,32 @@
 
 <script>
     import CountWeek from '../../static/utils/datePicker/CountWeek';
+    import CountBeforeOrAfterDay from '../../static/utils/datePicker/CountBeforeOrAfterDay';
 
+    import SingleYear from '../../PickerYear/depend/singleYear';
+    import SingleMonth from '../../PickerMonth/depend/singleMonth';
     import WeekSelect from './week';
     import Button from '../../Button';
 
     import ClearSvg from '../../static/iconSvg/clear2.svg';
+    import CalendarSvg from '../../static/iconSvg/calendar.svg';
     import CountPrevMonth from "../../static/utils/datePicker/CountPrevMonth";
     import CountNextMonth from "../../static/utils/datePicker/CountNextMonth";
     import CountPrevYear from "../../static/utils/datePicker/CountPrevYear";
     import CountNextYear from "../../static/utils/datePicker/CountNextYear";
+    import TrianglePickerLeft from '../../static/iconSvg/triangle_picker_left.svg';
+    import TrianglePickerRight from '../../static/iconSvg/triangle_picker_right.svg';
     export default {
         name: "panelSingleMonth",
         components: {
+            SingleYear,
+            SingleMonth,
             WeekSelect,
             Button,
-            ClearSvg
+            ClearSvg,
+            CalendarSvg,
+            TrianglePickerLeft,
+            TrianglePickerRight
         },
         props: {
             /**
@@ -88,6 +133,11 @@
             sort: {
                 type: String,
                 default: 'year'
+            },
+            // 快速切换时间
+            quickSwitch: {
+                type: Boolean,
+                default: false
             }
         },
         data() {
@@ -101,7 +151,7 @@
                 yearNow: '', // 当前年
                 monthNow: '', // 当前月
 
-                // 活动的年月日
+                // 活动的年月
                 yearActive: '',
                 monthActive: '',
 
@@ -110,14 +160,25 @@
                 monthSelected: '', // 选择的月
                 thTextSelected: '', // 选择的第几周 String
 
-                weeksArray: [] // 周列表
+                weeksArray: [], // 周列表
+                panelYear: false, // 显示年面板
+                panelMonth: false // 显示月面板
+            }
+        },
+        watch: {
+            date(n, o) {
+                if (n === o) return;
+                this.init(n);
+            },
+            pickerBoxStatus(n) {
+                if (n) return;
+                this.panelYearHandle(false);
+                this.panelMonthHandle(false);
             }
         },
         created() {
-            if (this.date) {
-                // 初始化日期对象
-                this.init();
-            }
+            // 初始化日期对象
+            this.init(this.date);
         },
         methods: {
             /**
@@ -130,12 +191,11 @@
             /**
              * 初始化日期对象
              */
-            init() {
-                const date=this.date;
+            init(date) {
                 const countWeek=new CountWeek({date, sort: this.sort});
                 this.weeksArray=countWeek.getWeeksArray();
-                const [year, month]=countWeek.countNowDate();
                 this.countWeek=countWeek;
+                const [year, month]=countWeek.countNowDate();
                 this.yearNow=year;
                 this.monthNow=month;
 
@@ -231,7 +291,7 @@
             pickerBoxShow() {
                 this.pickerBoxStatus=true;
                 // 初始化日期对象
-                this.init();
+                // this.init(this.date);
             },
             /**
              * 关闭时间选择盒子
@@ -299,6 +359,93 @@
                 this.thTextSelected=thText;
                 this.btnType='primary';
                 this.changeWeeksArray(thText);
+            },
+            // 年面板显示切换
+            panelYearHandle(status) {
+                this.panelYear=status;
+                this.panelMonth=false;
+            },
+            // 月面板显示切换
+            panelMonthHandle(status) {
+                // 计算月
+                const sm=this.$refs.singleMonth;
+                if (sm.yearActive !== this.yearActive || sm.monthActive !== this.monthActive) sm.init(this.yearActive+'.'+this.monthActive);
+                this.panelMonth=status;
+                this.panelYear=false;
+            },
+            // 点击年
+            panelYearChangeDate(year) {
+                this.panelYearHandle(false);
+                this.yearActive=year;
+
+                this.weeksArray=this.countWeek.yearChangeCountWeek(year, this.monthActive, this.sort);
+                this.btnType='disabled';
+
+                // this.weeksArray=weeksArray;
+                /*
+                修改选中的时间
+                if (this.date) {
+                    // this.yearSelected=year;
+                    if (this.sort === 'year') {
+                        const th=Number(this.thTextSelected.substr(5,2));
+                        this.weeksArray=weeksArray.map(d => {
+                            if (d.th === th) {
+                                d.selected='selected';
+                                // this.weeksSelected=d.weeks;
+                            }
+                            return d;
+                        });
+                        // this.thTextSelected=year+'第'+(th<10?'0'+th:th)+'周';
+                    } else {
+                        const tht=this.thTextSelected;
+                        const m=tht.substr(5,2);
+                        const th=Number(tht.substr(8, 2));
+                        this.weeksArray=weeksArray.map(d => {
+                            if (d.month === m && d.th === th) {
+                                d.selected='selected';
+                                // this.weeksSelected=d.weeks;
+                            }
+                            return d;
+                        });
+                        // this.thTextSelected=year+'.'+m+'第'+(th<10?'0'+th:th)+'周';
+                    }
+                } else {
+                    this.weeksArray=weeksArray;
+                }
+                */
+            },
+            // 点击月
+            panelMonthChangeDate({year, month}) {
+                this.panelMonthHandle(false);
+                this.monthActive=month;
+                this.weeksArray=this.countWeek.yearChangeCountWeek(year, month, this.sort);
+                this.btnType='disabled';
+            },
+
+            // 快速选择-设置时间 flat可选值【left，right】
+            quickSort(flag) {
+                if (!this.selectedDate) return;
+                const ws=this.weeksSelected, s=ws[0], e=ws[6];
+                const y1=s.year, m1=s.month, d1=s.day, y2=e.year, m2=e.month, d2=e.day;
+
+                let selectedDate;
+                if (flag === 'left') {
+                    const [ey, em, ed]=CountBeforeOrAfterDay(y1, m1, d1, -1);
+                    const [sy, sm, sd]=CountBeforeOrAfterDay(ey, em, ed, -6);
+                    const start=sy+'.'+sm+'.'+sd;
+                    const end=ey+'.'+em+'.'+ed;
+                    selectedDate=start+'-'+end;
+                } else {
+                    const [sy, sm, sd]=CountBeforeOrAfterDay(y2, m2, d2, 1);
+                    const [ey, em, ed]=CountBeforeOrAfterDay(sy, sm, sd, 6);
+                    const start=sy+'.'+sm+'.'+sd;
+                    const end=ey+'.'+em+'.'+ed;
+                    selectedDate=start+'-'+end;
+                }
+
+                this.init(selectedDate);
+                this.selectedDate=selectedDate;
+                this.$emit('change', {thTextSelected: this.thTextSelected, selectedDate});
             },
             /**
              * 确定

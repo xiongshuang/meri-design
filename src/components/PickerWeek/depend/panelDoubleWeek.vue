@@ -1,15 +1,34 @@
 <template>
     <div class="p-picker-child">
         <div
-                class="p-picker-input"
-                @click="pickerBoxShow"
+                :class="['p-picker-input', 'p-picker-input-double-max', quickSwitch?'p-picker-input-triangle':'p-picker-input-normal']"
                 @mouseover="pickerClearShow"
-                @mouseout="pickerClearHide"
+                @mouseleave="pickerClearHide"
         >
+            <i
+                    v-if="quickSwitch"
+                    :class="['p-picker-triangle', 'p-picker-triangle-left', !selectedDate&&'p-picker-triangle-disabled']"
+                    @click="quickSort('left')"
+            ><TrianglePickerLeft /></i>
             <section
-                    :class="['p-picker-input-tip', thTextSelected&&'p-picker-input-values']"
-            >{{thTextSelected?thTextSelected:'请选择日期'}}</section>
-            <ClearSvg v-show="clearStatus" class="p-picker-clear-svg" @click.stop="clearTime" />
+                    :class="['p-picker-input-double-tip', thTextSelected?'p-picker-input-values':'p-picker-input-tip']"
+                    @click="pickerBoxShow"
+            >
+                <article class="p-picker-input-tip-values p-picker-ellipsis">{{thTextSelectedStart?thTextSelectedStart:'开始日期'}}</article>
+                <article class="p-picker-input-tip-to">至</article>
+                <article class="p-picker-input-tip-values p-picker-ellipsis">{{thTextSelectedEnd?thTextSelectedEnd:'结束日期'}}</article>
+            </section>
+            <section v-if="!quickSwitch" class="p-picker-svg-box">
+                <ClearSvg class="p-picker-clear-svg" v-if="clearStatus" @click.stop="clearTime" />
+                <CalendarSvg v-else />
+            </section>
+            <i v-if="quickSwitch"
+               :class="[
+                   'p-picker-triangle', 'p-picker-triangle-right',
+                    !selectedDate&&'p-picker-triangle-disabled'
+               ]"
+               @click="quickSort('right')"
+            ><TrianglePickerRight /></i>
         </div>
         <transition name="opacityTop">
             <!--
@@ -25,18 +44,33 @@
             >
                 <div class="p-picker-main-item-box">
                     <div class="p-picker-main-item-input-box">
-                        <section class="p-picker-input p-picker-input-values-default">
+                        <section class="p-picker-input-alert">
                             <article
-                                    :class="[thTextSelectedStart&&'p-picker-input-values']"
+                                    :class="['p-picker-input-alert-tip', thTextSelectedStart?'p-picker-input-values':'p-picker-input-tip']"
                             >{{thTextSelectedStart?thTextSelectedStart:'开始日期'}}</article>
-                            <article class="p-picker-input-solstice">至</article>
+                            <article class="p-picker-input-tip-to">至</article>
                             <article
-                                    :class="[thTextSelectedEnd&&'p-picker-input-values']"
+                                    :class="['p-picker-input-alert-tip', thTextSelectedEnd?'p-picker-input-values':'p-picker-input-tip']"
                             >{{thTextSelectedEnd?thTextSelectedEnd:'结束日期'}}</article>
                         </section>
                     </div>
                     <div class="p-picker-main-item">
+                        <SingleYear
+                                ref="singleYearStart"
+                                v-show="panelYearStart"
+                                date=""
+                                @change="panelYearChangeDateStart"
+                                @panelYearDisableArrow="panelYearDisableArrowStart"
+                        />
+                        <SingleMonth
+                                ref="singleMonthStart"
+                                v-show="panelMonthStart"
+                                date=""
+                                @change="panelMonthChangeDateStart"
+                                @panelYearHandle="panelYearHandleStart"
+                        />
                         <WeekSelect
+                                v-show="!panelYearStart&&!panelMonthStart"
                                 :multiple="true"
                                 :yearNow="yearNow"
                                 :monthNow="monthNow"
@@ -51,8 +85,28 @@
                                 @nextMonth="nextMonthStart"
                                 @weekEnter="weekEnterStart"
                                 @change="changeDateStart"
+                                @panelYearHandle="panelYearHandleStart"
+                                @panelMonthHandle="panelMonthHandleStart"
+                        />
+                        <SingleYear
+                                ref="singleYearEnd"
+                                borderLeft="border-left"
+                                v-show="panelYearEnd"
+                                date=""
+                                @change="panelYearChangeDateEnd"
+                                @panelYearDisableArrow="panelYearDisableArrowEnd"
+                        />
+                        <SingleMonth
+                                ref="singleMonthEnd"
+                                v-show="panelMonthEnd"
+                                borderLeft="border-left"
+                                date=""
+                                @change="panelMonthChangeDateEnd"
+                                @panelYearHandle="panelYearHandleEnd"
                         />
                         <WeekSelect
+                                v-show="!panelYearEnd&&!panelMonthEnd"
+                                borderLeft="border-left"
                                 :multiple="true"
                                 :yearNow="yearNow"
                                 :monthNow="monthNow"
@@ -67,6 +121,8 @@
                                 @nextMonth="nextMonthEnd"
                                 @weekEnter="weekEnterEnd"
                                 @change="changeDateEnd"
+                                @panelYearHandle="panelYearHandleEnd"
+                                @panelMonthHandle="panelMonthHandleEnd"
                         />
                     </div>
                 </div>
@@ -80,23 +136,34 @@
 </template>
 
 <script>
+    import SingleYear from '../../PickerYear/depend/singleYear';
+    import SingleMonth from '../../PickerMonth/depend/singleMonth';
     import CountWeek from '../../static/utils/datePicker/CountWeek';
 
     import WeekSelect from './week';
     import Button from '../../Button';
 
     import ClearSvg from '../../static/iconSvg/clear2.svg';
+    import CalendarSvg from '../../static/iconSvg/calendar.svg';
     import CountPrevMonth from "../../static/utils/datePicker/CountPrevMonth";
     import CountNextMonth from "../../static/utils/datePicker/CountNextMonth";
     import CountPrevYear from "../../static/utils/datePicker/CountPrevYear";
     import CountNextYear from "../../static/utils/datePicker/CountNextYear";
     import CountStartOrEndDate from "../../static/utils/datePicker/CountStartOrEndDate";
+    import TrianglePickerLeft from '../../static/iconSvg/triangle_picker_left.svg';
+    import TrianglePickerRight from '../../static/iconSvg/triangle_picker_right.svg';
+    import CountBeforeOrAfterDay from "../../static/utils/datePicker/CountBeforeOrAfterDay";
     export default {
         name: "panelDoubleMonth",
         components: {
+            SingleYear,
+            SingleMonth,
             WeekSelect,
             Button,
-            ClearSvg
+            ClearSvg,
+            CalendarSvg,
+            TrianglePickerLeft,
+            TrianglePickerRight
         },
         props: {
             /**
@@ -113,6 +180,11 @@
             sort: {
                 type: String,
                 default: 'year'
+            },
+            // 快速切换时间
+            quickSwitch: {
+                type: Boolean,
+                default: false
             }
         },
         data() {
@@ -155,11 +227,29 @@
                 disableMonthRight: false, // 禁用开始时间右箭头-月
                 disableMonthLeft: false,  // 禁用结束时间左箭头-月
 
-                sameMonth: false // 开始结束时间在同一月
+                sameMonth: false, // 开始结束时间在同一月
+
+                panelYearStart: false, // 显示年面板
+                panelMonthStart: false, // 显示月面板
+                panelYearEnd: false, // 显示年面板
+                panelMonthEnd: false // 显示月面板
+            }
+        },
+        watch: {
+            date(n, o) {
+                if (n === o) return;
+                this.dateFormat(n);
+            },
+            pickerBoxStatus(n) {
+                if (n) return;
+                this.panelYearHandleStart(false);
+                this.panelMonthHandleStart(false);
+                this.panelYearHandleEnd(false);
+                this.panelMonthHandleEnd(false);
             }
         },
         created() {
-            if (this.date) this.dateFormat(this.date);
+            this.dateFormat(this.date);
         },
         methods: {
             /**
@@ -174,30 +264,33 @@
              * @param date String '2020.01.06-2020.01.19'
              */
             dateFormat(date) {
-                const [ds, de]=date.split('-'); // 得到开始、结束时间
-                const yms=ds.substr(0, 7); // 得到开始时间年月
+                this.selectedDate=date;
+                if (date) {
+                    const [ds, de]=date.split('-'); // 得到开始、结束时间
+                    const yms=ds.substr(0, 7); // 得到开始时间年月
 
-                const endLeftDate=CountStartOrEndDate(de, -6); // 计算结束周的开始年月日
-                const yme=endLeftDate.substr(0, 7); // 得到结束时间年月
+                    const endLeftDate=CountStartOrEndDate(de, -6); // 计算结束周的开始年月日
+                    const yme=endLeftDate.substr(0, 7); // 得到结束时间年月
 
-                // 设置结束时间
-                const [yearE, monthE]=endLeftDate.split('.');
-                this.yearSelectedEnd=yearE;
-                this.monthSelectedEnd=monthE;
-                this.yearActiveEnd=yearE;
-                this.monthActiveEnd=monthE;
-                this.selectedDateEnd=endLeftDate+'-'+de;
+                    // 设置结束时间
+                    const [yearE, monthE]=endLeftDate.split('.');
+                    this.yearSelectedEnd=yearE;
+                    this.monthSelectedEnd=monthE;
+                    this.yearActiveEnd=yearE;
+                    this.monthActiveEnd=monthE;
+                    this.selectedDateEnd=endLeftDate+'-'+de;
 
-                // 设置开始时间
-                const [yearS, monthS]=ds.split('.');
-                this.yearSelectedStart=yearS;
-                this.monthSelectedStart=monthS;
-                this.yearActiveStart=yearS;
-                this.monthActiveStart=monthS;
-                this.selectedDateStart=ds+'-'+CountStartOrEndDate(ds, 6);
+                    // 设置开始时间
+                    const [yearS, monthS]=ds.split('.');
+                    this.yearSelectedStart=yearS;
+                    this.monthSelectedStart=monthS;
+                    this.yearActiveStart=yearS;
+                    this.monthActiveStart=monthS;
+                    this.selectedDateStart=ds+'-'+CountStartOrEndDate(ds, 6);
 
-                // 如果开始结束年月相等，表示在同一月
-                this.sameMonth=(yms === yme);
+                    // 如果开始结束年月相等，表示在同一月
+                    this.sameMonth=(yms === yme);
+                }
 
                 this.initEnd();
             },
@@ -868,6 +961,157 @@
                 [this.thTextSelectedStart, this.thTextSelectedEnd]=[this.thTextSelectedEnd, this.thTextSelectedStart];
             },
             */
+
+            // 清空开始周选中
+            clearWeeksArrayStart() {
+                this.weeksArrayStart=this.weeksArrayStart.map(d => {
+                    d.selected='';
+                    d.multiple='';
+                    return d;
+                });
+                this.btnType='disabled';
+            },
+            // 清空结束周选中
+            clearWeeksArrayEnd() {
+                this.weeksArrayEnd=this.weeksArrayEnd.map(d => {
+                    d.selected='';
+                    d.multiple='';
+                    return d;
+                });
+                this.btnType='disabled';
+            },
+
+            // 年面板显示切换-start，如果flag为true则执行禁用箭头函数
+            panelYearHandleStart(status, flag) {
+                this.panelYearStart=status;
+                this.panelMonthStart=false;
+                const y=this.$refs.singleYearEnd.yearsArray[0].year;
+                // 重新计算年列表
+                const yae=(y-1).toString();
+                this.$refs.singleYearStart.init(yae);
+                this.$refs.singleYearStart.changeYearsArray(this.yearActiveStart);
+                if (flag) this.panelYearDisableArrowStart();
+            },
+            // 年面板显示切换-end
+            panelYearHandleEnd(status, flag) {
+                this.panelYearEnd=status;
+                this.panelMonthEnd=false;
+                const y=this.$refs.singleYearStart.yearsArray[11].year;
+                // 重新计算年列表
+                const yas=(Number(y)+12).toString();
+                this.$refs.singleYearEnd.init(yas);
+                this.$refs.singleYearEnd.changeYearsArray(this.yearActiveEnd);
+                if (flag) this.panelYearDisableArrowEnd();
+            },
+            // 禁用箭头-start
+            panelYearDisableArrowStart() {
+                const sys=this.$refs.singleYearStart, sye=this.$refs.singleYearEnd;
+                const yas=sys.yearsArray;
+                const yae=sye.yearsArray;
+                const ys=yas[11].year, ye=yae[0].year;
+                if (ye - ys < 12) {
+                    sys.disableYearRight = true;
+                    sye.disableYearLeft = true;
+                } else {
+                    sys.disableYearRight = false;
+                    sye.disableYearLeft = false;
+                }
+            },
+            // 禁用箭头-end
+            panelYearDisableArrowEnd() {
+                const sys=this.$refs.singleYearStart, sye=this.$refs.singleYearEnd;
+                const yas=sys.yearsArray;
+                const yae=sye.yearsArray;
+                const ys=yas[11].year, ye=yae[0].year;
+                if (ye - ys < 12) {
+                    sye.disableYearLeft = true;
+                    sys.disableYearRight = true;
+                } else {
+                    sye.disableYearLeft = false;
+                    sys.disableYearRight = false;
+                }
+            },
+            // 点击年-start
+            panelYearChangeDateStart(year) {
+                this.panelYearHandleStart(false);
+                this.yearActiveStart=year;
+                this.weeksArrayStart=this.countWeekStart.yearChangeCountWeek(year, this.monthActiveStart, this.sort);
+                if (this.yearSelectedStart && this.yearSelectedEnd) this.clearWeeksArrayEnd();
+            },
+            // 点击年-end
+            panelYearChangeDateEnd(year) {
+                this.panelYearHandleEnd(false);
+                this.yearActiveEnd=year;
+                this.weeksArrayEnd=this.countWeekEnd.yearChangeCountWeek(year, this.monthActiveEnd, this.sort);
+                if (this.yearSelectedStart && this.yearSelectedEnd) this.clearWeeksArrayStart();
+            },
+            // 月面板的yearActive改变，改变年面板的year选中项-start
+            changeYearsArrayHandleStart(year) {
+                this.$refs.singleYearStart.changeYearsArray(year)
+            },
+            // 月面板的yearActive改变，改变年面板的year选中项-end
+            changeYearsArrayHandleEnd(year) {
+                this.$refs.singleYearEnd.changeYearsArray(year)
+            },
+            // 月面板显示切换-start
+            panelMonthHandleStart(status) {
+                // 计算月
+                const sms=this.$refs.singleMonthStart;
+                if (sms.yearActive !== this.yearActiveStart || sms.monthActive !== this.monthActiveStart) sms.init(this.yearActiveStart+'.'+this.monthActiveStart);
+                this.panelMonthStart=status;
+
+                if (this.yearActiveStart === this.yearActiveEnd) sms.setMonthsArrayRightDisable(this.monthActiveEnd);
+            },
+            // 月面板显示切换-end
+            panelMonthHandleEnd(status) {
+                // 计算月
+                const sme=this.$refs.singleMonthEnd;
+                if (sme.yearActive !== this.yearActiveEnd || sme.monthActive !== this.monthActiveEnd) sme.init(this.yearActiveEnd+'.'+this.monthActiveEnd);
+                this.panelMonthEnd=status;
+
+                if (this.yearActiveStart === this.yearActiveEnd) sme.setMonthsArrayLeftDisable(this.monthActiveStart);
+            },
+            // 点击月-start
+            panelMonthChangeDateStart({year, month}) {
+                this.panelMonthHandleStart(false);
+                this.monthActiveStart=month;
+                this.weeksArrayStart=this.countWeekStart.yearChangeCountWeek(year, month, this.sort);
+                if (this.yearSelectedStart && this.yearSelectedEnd) this.clearWeeksArrayEnd();
+            },
+            // 点击月-end
+            panelMonthChangeDateEnd({year, month}) {
+                this.panelMonthHandleEnd(false);
+                this.monthActiveEnd=month;
+                this.weeksArrayEnd=this.countWeekEnd.yearChangeCountWeek(year, month, this.sort);
+                if (this.yearSelectedStart && this.yearSelectedEnd) this.clearWeeksArrayStart();
+            },
+
+            // 快速选择-设置时间 flag可选值【left，right】
+            quickSort(flag) {
+                if (!this.selectedDate) return;
+                const ws=this.weeksSelectedStart, s=ws[0],
+                    we=this.weeksSelectedEnd, e=we[6];
+                const ys=s.year, ms=s.month, ds=s.day,
+                    ye=e.year, me=e.month, de=e.day;
+                const diff=(new Date(ye, me-1, de).getTime() - new Date(ys, ms-1, ds).getTime()) / (1000*60*60*24);
+
+                let selectedDateStart, selectedDateEnd;
+                if (flag === 'left') {
+                    const [ey, em, ed]=CountBeforeOrAfterDay(ys, ms, ds, -1);
+                    const [sy, sm, sd]=CountBeforeOrAfterDay(ey, em, ed, -diff);
+                    selectedDateStart=sy+'.'+sm+'.'+sd;
+                    selectedDateEnd=ey+'.'+em+'.'+ed;
+                } else {
+                    const [sy, sm, sd]=CountBeforeOrAfterDay(ye, me, de, 1);
+                    const [ey, em, ed]=CountBeforeOrAfterDay(sy, sm, sd, diff);
+                    selectedDateStart=sy+'.'+sm+'.'+sd;
+                    selectedDateEnd=ey+'.'+em+'.'+ed;
+                }
+
+                const selectedDate=selectedDateStart+'-'+selectedDateEnd;
+                this.dateFormat(selectedDate);
+                this.$emit('change', {thTextSelected: this.thTextSelected, selectedDate});
+            },
             /**
              * 确定
              */

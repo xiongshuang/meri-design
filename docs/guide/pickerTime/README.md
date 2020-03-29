@@ -1,13 +1,24 @@
-### PickerTime 时分秒选择 示例-开发中...
+### PickerTime 时分秒选择 内侧中...
 
 <template>
     <div class="component component-padding">
         <h1>PickerTime组件</h1>
-        <h3>format="hms"</h3>
-        <PickerTime :time="time1" format="hms" :range="true" @change="timeChange1" />
-        <br><br><br><br><br>
         <h3>format="hm"</h3>
-        <PickerTime :time="time2" format="hm" @change="timeChange2" />
+        <br>
+        <PickerTime :time="timeHm" format="hm" @change="timeChangeHm" />
+        <br><br>
+        <h3>format="hms"</h3>
+        <br>
+        <PickerTime :time="timeHms" format="hms" @change="timeChangeHms" />
+        <br><br>
+        <h3>format="hm"</h3>
+        <br>
+        <PickerTime :time="timeHmDouble" format="hm" :range="true" @change="timeChangeHmDouble" />
+        <br><br>
+        <h3>format="hms"</h3>
+        <br>
+        <PickerTime :time="timeHmsDouble" format="hms" :range="true" @change="timeChangeHmsDouble" />
+        <br><br><br><br><br>
     </div>
 </template>
 
@@ -16,40 +27,54 @@
         name: "PickerTimeView",
         data() {
             return {
-                time1: '',
-                time2: '',
+                timeHm: '08:09',
+                timeHms: '',
+                timeHmDouble: '',
+                timeHmsDouble: '08:09:25-13:14:52',
             }
         },
         methods: {
-            timeChange1(time) {
+            timeChangeHm(time) {
+                console.log('选择的时分::::', time);
+                this.timeHm=time;
+            },
+            timeChangeHms(time) {
+                console.log('选择的时分秒::::', time);
+                this.timeHms=time;
+            },
+            timeChangeHmDouble(time) {
                 console.log('选择的时分秒::::', time);
                 this.time1=time;
             },
-            timeChange2(time) {
+            timeChangeHmsDouble(time) {
                 console.log('选择的时分秒::::', time);
                 this.time2=time;
             }
         }
     }
 </script>
-
-<style lang="stylus" scoped>
-
-.component-padding
-    padding-bottom 200px !important
-    width 240px
-
-</style>
 
 ```vue
 <template>
     <div class="component component-padding">
         <h1>PickerTime组件</h1>
-        <h3>format="hms"</h3>
-        <PickerTime :time="time1" format="hms" :range="true" @change="timeChange1" />
-        <br><br><br><br><br>
         <h3>format="hm"</h3>
-        <PickerTime :time="time2" format="hm" @change="timeChange2" />
+        <br>
+        <PickerTime :time="timeHm" format="hm" @change="timeChangeHm" />
+        <br><br>
+        <h3>format="hms"</h3>
+        <br>
+        <PickerTime :time="timeHms" format="hms" @change="timeChangeHms" />
+        <br><br>
+
+        <h3>format="hm"</h3>
+        <br>
+        <PickerTime :time="timeHmDouble" format="hm" :range="true" @change="timeChangeHmDouble" />
+        <br><br>
+        <h3>format="hms"</h3>
+        <br>
+        <PickerTime :time="timeHmsDouble" format="hms" :range="true" @change="timeChangeHmsDouble" />
+        <br><br><br><br><br>
     </div>
 </template>
 
@@ -58,21 +83,30 @@
         name: "PickerTimeView",
         data() {
             return {
-                time1: '',
-                time2: '',
+                timeHm: '08:09',
+                timeHms: '',
+                timeHmDouble: '',
+                timeHmsDouble: '08:09:25-13:14:52',
             }
         },
         methods: {
-            timeChange1(time) {
+            timeChangeHm(time) {
+                console.log('选择的时分::::', time);
+                this.timeHm=time;
+            },
+            timeChangeHms(time) {
+                console.log('选择的时分秒::::', time);
+                this.timeHms=time;
+            },
+            timeChangeHmDouble(time) {
                 console.log('选择的时分秒::::', time);
                 this.time1=time;
             },
-            timeChange2(time) {
+            timeChangeHmsDouble(time) {
                 console.log('选择的时分秒::::', time);
                 this.time2=time;
             }
         }
     }
 </script>
-
 ```

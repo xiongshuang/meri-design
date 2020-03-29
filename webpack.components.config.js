@@ -8,9 +8,6 @@ const WebpackBar = require('webpackbar');
 
 const VueLoaderPlugin = require('vue-loader/lib/plugin'); // vue加载器
 const PostStylus=require('poststylus'); // stylus加前缀
-const HappyPack = require('happypack'); // 分块打包
-const os=require('os');
-const happyThreadPool=HappyPack.ThreadPool({ size: os.cpus().length });
 
 // 获取时间
 const TimeFn=require('./get_time');
@@ -47,6 +44,7 @@ console.log(
  */
 const cssConfig=[
     MiniCssExtractPlugin.loader,
+    'thread-loader',
     {
         loader: 'css-loader',
         options: {
@@ -57,6 +55,7 @@ const cssConfig=[
 ]
     ,stylusConfig=[
         MiniCssExtractPlugin.loader,
+        'thread-loader',
         {
             loader: 'css-loader',
             options: {
@@ -85,7 +84,7 @@ const config={
         path: path.resolve(__dirname, 'dist'),
         filename: 'index.js', // [name] 是entry的key
         publicPath: '/',
-        library: 'persagy-ui', // 指定的就是你使用require时的模块名
+        library: 'meri-design', // 指定的就是你使用require时的模块名
         libraryTarget: 'umd', // libraryTarget会生成不同umd的代码,可以只是commonjs标准的，也可以是指amd标准的，也可以只是通过script标签引入的
         umdNamedDefine: true, // 会对 UMD 的构建过程中的 AMD 模块进行命名。否则就使用匿名的 define
         globalObject: 'this'
@@ -98,11 +97,14 @@ const config={
             },
             {
                 test: /\.styl(us)?$/,
-                use: stylusConfig
+                use: stylusConfig,
+                include: [path.resolve(__dirname, 'src')]
             },
             {
                 test: /\.vue$/,
-                use: {
+                use: [
+                    'thread-loader',
+                    {
                     loader: 'vue-loader',
                     options: {
                         loaders:{
@@ -111,18 +113,20 @@ const config={
                         },
                         preserveWhitespace: false // 不要留空白
                     }
-                }
+                }],
+                include: [path.resolve(__dirname, 'src')]
             },
             {
                 test: /\.js$/,
-                use: 'happypack/loader?id=js_vue',
+                use: ['thread-loader', 'babel-loader'],
                 exclude: file => (
                     /node_modules/.test(file) && !/\.vue\.js/.test(file)
                 )
             },
             {
                 test: /\.svg$/,
-                loader: ['babel-loader', 'vue-svg-loader']
+                use: ['babel-loader', 'vue-svg-loader'],
+                include: [path.resolve(__dirname, 'src')]
             },
             {
                 test: /\.(png|jpe?g|gif|bmp)$/,
@@ -133,12 +137,8 @@ const config={
                         name: '[name].[ext]?[hash:8]',
                         outputPath: 'images/'
                     }
-                },{
-                    loader: 'image-webpack-loader', // 图片压缩
-                    options: {
-                        bypassOnDebug: true
-                    }
-                }]
+                }],
+                include: [path.resolve(__dirname, 'src')]
             },
             {
                 test: /\.html$/,
@@ -149,7 +149,7 @@ const config={
                     }
                 }]
             },
-            {test: /\.(mp4|ogg)$/,use: ['file-loader']},
+            {test: /\.(mp4|ogg)$/,use: ['file-loader'], include: [path.resolve(__dirname, 'src')]},
             {
                 test:/\.(woff2?|eot|ttf|otf)(\?.*)?$/,
                 loader:'url-loader',
@@ -170,21 +170,13 @@ const config={
         ]
     },
     plugins: [
-        new webpack.BannerPlugin(`@xs ${TimeFn()}`),
+        new webpack.BannerPlugin(`@meri-design ${TimeFn()}`),
         new VueLoaderPlugin(), // vue加载器
         new OptimizeCssAssetsPlugin({
             assetNameRegExp: /\.css$/g,       //一个正则表达式，指示应优化/最小化的资产的名称。提供的正则表达式针对配置中ExtractTextPlugin实例导出的文件的文件名运行，而不是源CSS文件的文件名。默认为/\.css$/g
             cssProcessor: require('cssnano'), //用于优化\最小化CSS的CSS处理器，默认为cssnano
             cssProcessorOptions: { safe: true, discardComments: { removeAll: true } }, //传递给cssProcessor的选项，默认为{}
             canPrint: true                    //一个布尔值，指示插件是否可以将消息打印到控制台，默认为true
-        }),
-        new HappyPack({
-            id: 'js_vue', // id值，与loader配置项对应
-            loaders: [{
-                loader: 'babel-loader'
-            }], // 用什么loader处理
-            threadPool: happyThreadPool, // 共享进程池
-            verbose: true //允许 HappyPack 输出日志
         }),
         new webpack.LoaderOptionsPlugin({ // stylus加前缀
             options: {

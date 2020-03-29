@@ -1,0 +1,110 @@
+.p-transfer-main
+  display inline-flex
+  background-color $white
+  border-radius 4px
+  box-shadow $box-shadow-bottom
+  width 100%
+  height 480px
+  .p-transfer-main-child
+    padding 24px 16px
+    width 50%
+    height 100%
+  .p-transfer-left
+    border-right 1px solid $grey-200
+    .p-transfer-left-input
+      margin-bottom 8px
+      width 100%
+    .p-transfer-left-content
+      width 100%
+      //height 392px
+      overflow-y auto
+      .p-transfer-left-content-none
+        padding-top 100px
+        width 100%
+        text-align center
+        color $grey-400
+        font-size 14px
+        user-select none
+  .p-transfer-right
+    .p-transfer-right-title
+      display flex
+      justify-content space-between
+      align-items center
+      padding-bottom 4px
+      border-bottom 1px solid transparent
+      line-height 22px
+      &.p-transfer-right-title-border
+        border-bottom-color $grey-200
+      > article
+        font-size 14px
+      .p-transfer-right-title-text
+        color $grey-500
+      .p-transfer-right-title-text-num
+        margin-left 4px
+      .p-transfer-right-clear
+        color $grey-500
+        transition color .3s
+        cursor not-allowed
+      .p-transfer-right-clear-active
+        color $blue-500
+        cursor pointer
+        &:active
+          color $blue-600
+    .p-transfer-selected
+      margin-top 8px
+      width 100%
+      //height 353px
+      overflow-y auto
+      color $grey-500
+      font-size 14px
+      .p-transfer-selected-item
+        display inline-flex
+        justify-content space-between
+        align-items center
+        padding 5px 16px
+        width 100%
+        height 40px
+        &:hover
+          background-color $grey-200
+        > span
+          display inline-block
+          width calc(100% - 16px)
+          color $grey-900
+          line-height 22px
+          white-space nowrap
+          overflow hidden
+          text-overflow ellipsis
+        > svg
+          width 14px
+          cursor pointer
+          path
+            transition fill .3s
+          &:hover
+            path
+              fill $blue-500
+    .p-transfer-btn
+      position relative
+      padding-top 20px
+      padding-bottom 20px
+      width 100%
+      text-align right
+      &.p-transfer-btn-shadow
+        box-shadow $box-shadow-top
+      &::before
+        position absolute
+        top 0
+        left -16px
+        display block
+        background-color #fff
+        width 16px
+        height 100%
+        content ''
+      &::after
+        position absolute
+        top 0
+        right -16px
+        display block
+        background-color #fff
+        width 16px
+        height 100%
+        content ''

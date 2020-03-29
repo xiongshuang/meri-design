@@ -143,7 +143,7 @@
             border-radius 9px
             height 18px
             text-align center
-            color #fff
+            color $white
             z-index 10
             &.p-badge-dot
                 padding 0

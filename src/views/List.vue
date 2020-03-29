@@ -13,7 +13,7 @@
         props: {
             data: {
                 type: Array,
-                default: [],
+                default: () => [],
                 require: true
             }
         }

@@ -1,5 +1,5 @@
 <template>
-    <div class="p-picker-child-select-box">
+    <div :class="['p-picker-child-select-box', 'p-picker-child-select-box-'+borderLeft]">
         <div class="p-picker-child-select-box-title">
             <section class="p-picker-child-select-box-icon">
                 <article
@@ -18,8 +18,8 @@
                 </article>
             </section>
             <section class="p-picker-child-select-box-title-text">
-                <article>{{yearActive}}年</article>
-                <article>{{monthActive}}月</article>
+                <article class="p-picker-active-title" @click="yearActiveClick">{{yearActive}}年</article>
+                <article class="p-picker-active-title" @click="monthActiveClick">{{monthActive}}月</article>
             </section>
             <section class="p-picker-child-select-box-icon">
                 <article
@@ -77,6 +77,11 @@
         name: "DaySelect",
         components: { ArrowRightSvg, ArrowRightDoubleSvg },
         props: {
+            // 左边框
+            borderLeft: {
+                type: String,
+                default: ''
+            },
             /**
              * 日期
              */
@@ -124,7 +129,7 @@
              */
             daysArray: {
                 type: Array,
-                default: []
+                default: () => []
             },
 
             /**
@@ -208,6 +213,14 @@
             dayEnter(obj) {
                 if (!this.multiple || obj.flag !== 'n') return;
                 this.$emit('dayEnter', obj);
+            },
+            // 点击active的年，去选择active的年
+            yearActiveClick() {
+                this.$emit('panelYearHandle', true, true);
+            },
+            // 点击active的月，去选择active的月
+            monthActiveClick() {
+                this.$emit('panelMonthHandle', true, true);
             }
         }
     }
@@ -263,7 +276,7 @@
             &:nth-of-type(7n)
                 margin-right 0
     .p-picker-day-content
-        padding 8px 0 8px 16px
+        padding 8px 0 8px 15px
         width 100%
         height 208px
         .p-picker-day-select
@@ -287,7 +300,7 @@
                     margin-right 0
                 span
                     position relative
-                    line-height 24px
+                    line-height 22px
                     color $grey-900
                     font-size 14px
                     text-align center
@@ -303,7 +316,7 @@
                     span
                         color $grey-400
                 &.p-picker-day-text-current
-                    background-color #fff !important
+                    background-color $white !important
                     border-color $blue-500
                     span
                         color $blue-500
@@ -321,12 +334,8 @@
                 &.p-picker-day-text-selected
                     background-color $blue-500 !important
                     span
-                        color #fff
+                        color $white
                     &::before
                         display none
-    //&+.p-picker-day-text-multiple
-    //    &::before
-    //        left -18px
-    //        width 48px
 
 </style>

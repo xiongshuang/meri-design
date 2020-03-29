@@ -1,15 +1,30 @@
 <template>
     <div class="p-picker-child">
         <div
-                class="p-picker-input"
-                @click="pickerBoxShow"
+                :class="['p-picker-input', 'p-picker-input-double', quickSwitch?'p-picker-input-triangle':'p-picker-input-normal']"
                 @mouseover="pickerClearShow"
-                @mouseout="pickerClearHide"
+                @mouseleave="pickerClearHide"
         >
+            <i v-if="quickSwitch"
+               :class="['p-picker-triangle', 'p-picker-triangle-left', !selectedDate&&'p-picker-triangle-disabled']"
+               @click="quickSort('left')"
+            ><TrianglePickerLeft /></i>
             <section
-                    :class="['p-picker-input-tip', selectedDate&&'p-picker-input-values']"
-            >{{selectedDate?selectedDate:'请选择日期'}}</section>
-            <ClearSvg v-show="clearStatus" class="p-picker-clear-svg" @click.stop="clearTime" />
+                    :class="['p-picker-input-double-tip', selectedDate?'p-picker-input-values':'p-picker-input-tip']"
+                    @click="pickerBoxShow"
+            >
+                <article class="p-picker-input-tip-values">{{dateStart?dateStart:'开始日期'}}</article>
+                <article class="p-picker-input-tip-to">至</article>
+                <article class="p-picker-input-tip-values">{{dateEnd?dateEnd:'结束日期'}}</article>
+            </section>
+            <section v-if="!quickSwitch" class="p-picker-svg-box">
+                <ClearSvg class="p-picker-clear-svg" v-if="clearStatus" @click.stop="clearTime" />
+                <CalendarSvg v-else />
+            </section>
+            <i v-if="quickSwitch"
+               :class="['p-picker-triangle', 'p-picker-triangle-right', !selectedDate&&'p-picker-triangle-disabled']"
+               @click="quickSort('right')"
+            ><TrianglePickerRight /></i>
         </div>
         <transition name="opacityTop">
             <!--
@@ -25,18 +40,26 @@
             >
                 <div class="p-picker-main-item-box">
                     <div class="p-picker-main-item-input-box">
-                        <section class="p-picker-input p-picker-input-values-default">
+                        <section class="p-picker-input-alert">
                             <article
-                                    :class="[yearSelectedStart&&'p-picker-input-values']"
+                                    :class="['p-picker-input-alert-tip', yearSelectedStart?'p-picker-input-values':'p-picker-input-tip']"
                             >{{(yearSelectedStart&&monthSelectedStart)?(yearSelectedStart+'.'+monthSelectedStart):'开始日期'}}</article>
-                            <article class="p-picker-input-solstice">至</article>
+                            <article class="p-picker-input-tip-to">至</article>
                             <article
-                                    :class="[yearSelectedEnd&&'p-picker-input-values']"
+                                    :class="['p-picker-input-alert-tip', yearSelectedEnd?'p-picker-input-values':'p-picker-input-tip']"
                             >{{(yearSelectedEnd&&monthSelectedEnd)?(yearSelectedEnd+'.'+monthSelectedEnd):'结束日期'}}</article>
                         </section>
                     </div>
                     <div class="p-picker-main-item">
-                        <MonthSelect
+                        <SingleYear
+                                ref="singleYearStart"
+                                v-show="panelYearStart"
+                                date=""
+                                @change="panelYearChangeDateStart"
+                                @panelYearDisableArrow="panelYearDisableArrowStart"
+                        />
+                        <DoubleMonth
+                                v-show="!panelYearStart"
                                 :yearNow="yearNow"
                                 :monthNow="monthNow"
                                 :yearActive="yearActiveStart"
@@ -47,9 +70,19 @@
                                 @change="changeDateStart"
                                 :disableYearRight="disableYearRight"
                                 @monthEnter="monthEnterStart"
-                                :multiple="true"
+                                @panelYearHandle="panelYearHandleStart"
                         />
-                        <MonthSelect
+                        <SingleYear
+                                ref="singleYearEnd"
+                                borderLeft="border-left"
+                                v-show="panelYearEnd"
+                                date=""
+                                @change="panelYearChangeDateEnd"
+                                @panelYearDisableArrow="panelYearDisableArrowEnd"
+                        />
+                        <DoubleMonth
+                                v-show="!panelYearEnd"
+                                borderLeft="border-left"
                                 :yearNow="yearNow"
                                 :monthNow="monthNow"
                                 :yearActive="yearActiveEnd"
@@ -60,7 +93,7 @@
                                 @change="changeDateEnd"
                                 :disableYearLeft="disableYearLeft"
                                 @monthEnter="monthEnterEnd"
-                                :multiple="true"
+                                @panelYearHandle="panelYearHandleEnd"
                         />
                     </div>
                 </div>
@@ -74,18 +107,27 @@
 </template>
 
 <script>
+    import SingleYear from '../../PickerYear/depend/singleYear';
     import CountMonth from '../../static/utils/datePicker/CountMonth';
+    import CountLeftOrRightMonth from '../../static/utils/datePicker/CountLeftOrRightMonth';
 
-    import MonthSelect from './month';
+    import DoubleMonth from './doubleMonth';
     import Button from '../../Button';
 
     import ClearSvg from '../../static/iconSvg/clear2.svg';
+    import CalendarSvg from '../../static/iconSvg/calendar.svg';
+    import TrianglePickerLeft from '../../static/iconSvg/triangle_picker_left.svg';
+    import TrianglePickerRight from '../../static/iconSvg/triangle_picker_right.svg';
     export default {
         name: "panelDoubleMonth",
         components: {
-            MonthSelect,
+            SingleYear,
+            DoubleMonth,
             Button,
-            ClearSvg
+            ClearSvg,
+            CalendarSvg,
+            TrianglePickerLeft,
+            TrianglePickerRight
         },
         props: {
             /**
@@ -94,6 +136,11 @@
             date: {
                 type: String,
                 default: ''
+            },
+            // 快速切换时间
+            quickSwitch: {
+                type: Boolean,
+                default: false
             }
         },
         data() {
@@ -127,7 +174,23 @@
                 monthsArrayEnd: [], // 日列表-结束
 
                 disableYearRight: false, // 禁用开始时间右箭头-年
-                disableYearLeft: false  // 禁用结束时间左箭头-年
+                disableYearLeft: false,  // 禁用结束时间左箭头-年
+
+                panelYearStart: false, // 显示年面板
+                panelYearEnd: false // 显示年面板
+            }
+        },
+        watch: {
+            date(n, o) {
+                if (n === o) return;
+                this.dateFormat(n);
+
+                this.initEnd();
+            },
+            pickerBoxStatus(n) {
+                if (n) return;
+                this.panelYearHandleStart(false);
+                this.panelYearHandleEnd(false);
             }
         },
         created() {
@@ -190,8 +253,10 @@
              * 初始化日期对象
              */
             initStart(date) {
-                const dateStart=date?date:(this.monthsArrayEnd[0].year-1).toString();
-                const countMonthStart=new CountMonth(dateStart); // 当前计算年的对象
+                const dateS=date.replace(/\./g, '');
+                const dateE=this.dateEnd.replace(/\./g, '');
+                const dateStart=(date && (dateE - dateS > 12))?date:(this.monthsArrayEnd[0].year-1).toString();
+                const countMonthStart=new CountMonth(dateStart+'.01.01'); // 当前计算年的对象
                 this.monthsArrayStart=countMonthStart.getMonthsArray();
 
                 this.setDateStart(this.dateStart);
@@ -204,8 +269,8 @@
              */
             setDateEnd(date) {
                 if (date) {
-                    const dateS=this.dateStart.replace(/\./, '');
-                    const dateE=date.replace(/\./, '');
+                    const dateS=this.dateStart.replace(/\./g, '');
+                    const dateE=date.replace(/\./g, '');
                     const [year, month]=date.split('.');
                     this.yearSelectedEnd=year;
                     this.monthSelectedEnd=month;
@@ -240,13 +305,11 @@
              */
             setDateStart(date) {
                 if (date) {
-                    const dateS=date.replace(/\./, '');
-                    const dateE=this.dateEnd.replace(/\./, '');
+                    const dateS=date.replace(/\./g, '');
+                    const dateE=this.dateEnd.replace(/\./g, '');
                     const [year, month]=date.split('.');
                     this.yearSelectedStart=year;
                     this.monthSelectedStart=month;
-                    this.yearActiveStart=year;
-                    this.monthActiveStart=month;
 
                     if (dateE-dateS>12) {
                         // 设置默认选中状态
@@ -257,6 +320,9 @@
                             else if (dateC>dateS) d.multiple='multiple';
                             return d;
                         })
+                    } else {
+                        this.yearActiveStart=year-1+'';
+                        this.monthActiveStart=month;
                     }
                 } else {
                     this.yearActiveStart=this.monthsArrayStart[0].year;
@@ -323,6 +389,8 @@
                 this.pickerClearHide();
                 this.changeMonthsArrayStart({year: '', month: ''}, true);
                 this.changeMonthsArrayEnd({year: '', month: ''}, true);
+                this.changeYearsArrayHandleStart('');
+                this.changeYearsArrayHandleEnd('');
             },
 
             pickerMainBlur() {
@@ -412,6 +480,7 @@
             prevYearStart() {
                 const date=(this.yearActiveStart-1).toString();
                 this.yearActiveStart=date;
+                this.changeYearsArrayHandleStart(date);
                 this.switchDateStart(date+'.'+this.monthActiveStart);
             },
             /**
@@ -420,6 +489,7 @@
             prevYearEnd() {
                 const date=(this.yearActiveEnd-1).toString();
                 this.yearActiveEnd=date;
+                this.changeYearsArrayHandleEnd(date);
                 this.switchDateEnd(date+'.'+this.monthActiveEnd);
             },
             /**
@@ -657,6 +727,26 @@
                     }
                 }
             },
+            // 快速选择-设置时间 flag可选值【left，right】
+            quickSort(flag) {
+                if (!this.selectedDate) return;
+                const dateS=this.yearSelectedStart+'.'+this.monthSelectedStart, dateE=this.yearSelectedEnd+'.'+this.monthSelectedEnd;
+                const [YS, MS, YE, ME]=CountLeftOrRightMonth(flag, dateS, dateE);
+
+                const dateStart=YS+'.'+MS, dateEnd=YE+'.'+ME;
+                this.dateStart=dateStart;
+                this.dateEnd=dateEnd;
+
+                const selectedDate=dateStart+'-'+dateEnd;
+                this.yearSelectedStart=YS;
+                this.monthSelectedStart=MS;
+                this.yearSelectedEnd=YE;
+                this.monthSelectedEnd=ME;
+                this.selectedDate=selectedDate;
+
+                this.initEnd();
+                this.$emit('change', selectedDate);
+            },
             /**
              * 确定
              */
@@ -665,6 +755,8 @@
                 const dateE=this.yearSelectedEnd+'.'+this.monthSelectedEnd;
                 const selectedDate=dateS>dateE?(dateE+'-'+dateS):(dateS+'-'+dateE);
                 this.selectedDate=selectedDate;
+                this.dateStart=dateS;
+                this.dateEnd=dateE;
                 /**
                  * 返回选择的时分秒
                  * @type Function
@@ -672,6 +764,75 @@
                 this.$emit('change', selectedDate);
                 this.blurStatus=false;
                 this.pickerBoxStatus=false;
+            },
+
+            // 年面板显示切换-start，如果flag为true则执行禁用箭头函数
+            panelYearHandleStart(status, flag) {
+                this.panelYearStart=status;
+                const y=this.$refs.singleYearEnd.yearsArray[0].year;
+                // 重新计算年列表
+                const yae=(y-1).toString();
+                this.$refs.singleYearStart.init(yae);
+                this.$refs.singleYearStart.changeYearsArray(this.yearActiveStart);
+                if (flag) this.panelYearDisableArrowStart();
+            },
+            // 年面板显示切换-end
+            panelYearHandleEnd(status, flag) {
+                this.panelYearEnd=status;
+                const y=this.$refs.singleYearStart.yearsArray[11].year;
+                // 重新计算年列表
+                const yas=(Number(y)+12).toString();
+                this.$refs.singleYearEnd.init(yas);
+                this.$refs.singleYearEnd.changeYearsArray(this.yearActiveEnd);
+                if (flag) this.panelYearDisableArrowEnd();
+            },
+            // 禁用箭头-start
+            panelYearDisableArrowStart() {
+                const sys=this.$refs.singleYearStart, sye=this.$refs.singleYearEnd;
+                const yas=sys.yearsArray;
+                const yae=sye.yearsArray;
+                const ys=yas[11].year, ye=yae[0].year;
+                if (ye - ys < 12) {
+                    sys.disableYearRight = true;
+                    sye.disableYearLeft = true;
+                } else {
+                    sys.disableYearRight = false;
+                    sye.disableYearLeft = false;
+                }
+            },
+            // 禁用箭头-end
+            panelYearDisableArrowEnd() {
+                const sys=this.$refs.singleYearStart, sye=this.$refs.singleYearEnd;
+                const yas=sys.yearsArray;
+                const yae=sye.yearsArray;
+                const ys=yas[11].year, ye=yae[0].year;
+                if (ye - ys < 12) {
+                    sye.disableYearLeft = true;
+                    sys.disableYearRight = true;
+                } else {
+                    sye.disableYearLeft = false;
+                    sys.disableYearRight = false;
+                }
+            },
+            // 点击年-start
+            panelYearChangeDateStart(year) {
+                this.panelYearHandleStart(false);
+                this.yearActiveStart=year;
+                this.switchDateStart(year+'.'+this.monthActiveStart)
+            },
+            // 点击年-end
+            panelYearChangeDateEnd(year) {
+                this.panelYearHandleEnd(false);
+                this.yearActiveEnd=year;
+                this.switchDateEnd(year+'.'+this.monthActiveEnd)
+            },
+            // 月面板的yearActive改变，改变年面板的year选中项-start
+            changeYearsArrayHandleStart(year) {
+                this.$refs.singleYearStart.changeYearsArray(year)
+            },
+            // 月面板的yearActive改变，改变年面板的year选中项-end
+            changeYearsArrayHandleEnd(year) {
+                this.$refs.singleYearEnd.changeYearsArray(year)
             }
         }
     }

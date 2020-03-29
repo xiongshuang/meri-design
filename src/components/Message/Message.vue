@@ -34,11 +34,17 @@
             }
         },
         methods: {
-            closeNode() { // 移除当前节点
+            // 移除当前节点
+            closeNode() {
                 this.$el.style.transition='all .3s';
                 this.$el.style.opacity='.5';
                 this.$el.style.marginTop='0';
-                setTimeout(() => this.$el.parentNode.removeChild(this.$el), 300);
+                this.$el.style.transform='translateY(-100%)';
+                this.$destroy();
+                setTimeout(() => {
+                    this.$el.parentNode.removeChild(this.$el);
+                    if (this.cb) this.cb();
+                }, 300);
             }
         }
     }
@@ -48,10 +54,12 @@
     @import "../static/stylus/animate/fadeDownUpUi.styl"
 
     .p-message
-        display inline-block
-        padding 8px
+        display flex
+        justify-content space-around
+        align-items flex-start
+        padding 8px 8px 8px 12px
         border-radius 4px
-        box-shadow 0 2px 10px 0 rgba(31,35,41,.1)
+        box-shadow $box-shadow-bottom
         min-width 240px
         max-width 600px
         min-height 40px
@@ -61,13 +69,17 @@
         & + .p-message
             margin-top 24px
         .p-message-hint
-            margin-right 4px
             padding-top 4px
+            svg
+                width 16px
+                height 16px
         .p-message-text
-            width calc(100% - 52px)
+            padding-left 8px
+            padding-right 8px
+            width 100%
             text-align left
             font-size 14px
-            color #fff
+            color $white
             word-wrap break-word
             line-height 24px
         .p-message-close
@@ -75,6 +87,7 @@
             height 24px
             pointer-events auto
             svg
+                width 12px
                 opacity .5
                 transition opacity .3s
                 cursor pointer

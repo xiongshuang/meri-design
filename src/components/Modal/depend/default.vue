@@ -5,26 +5,30 @@
     >
         <div class="p-modal-title">
             <section class="p-title-text">{{title}}</section>
-            <Icon type="close" class="p-modal-title-icon" @click="$emit('close')" />
+			<i class="p-modal-title-icon" @click="$emit('close')">
+				<Close />
+			</i>
         </div>
         <div
                 :class="['p-modal-content', contentHeight>77&&'p-modal-content-max']"
                 :style="{height: contentHeight>77?(contentHeight+'px'):'auto'}"
         >
             <div class="p-modal-content-main" ref="modalContentMain">
-                <slot name="default"></slot>
+                <slot name="default" />
             </div>
         </div>
-        <slot name="handle"></slot>
+        <div :class="['p-modal-handle', handleShadow&&'p-modal-handle-shadow']">
+            <slot name="handle" />
+        </div>
     </div>
 </template>
 
 <script>
-    import Icon from '../../Icon';
+    import Close from '../../static/iconSvg/icon_close.svg';
 
     export default {
         name: 'Default',
-        components: { Icon },
+        components: { Close },
         props: {
             title: {
                 type: String,
@@ -37,6 +41,7 @@
                 modalMainLeft: 0 // 内容距离左边位置
                 ,modalMainTop: 120 // 内容距离顶部位置
                 ,contentHeight: 77 // 内容是否达到最大高度
+                ,handleShadow: false // 操作区按钮投影
             }
         },
         mounted() {
@@ -53,15 +58,19 @@
                     if (!mc) return;
                     const modalContentWidth=mc.clientWidth;
                     const modalContentHeight=mc.clientHeight;
-                    console.log(modalContentWidth, modalContentHeight);
                     this.modalMainLeft=(bodyWidth - modalContentWidth-64)/2;
                     const top=(bodyHeight-modalContentHeight-161)/2;
                     if (top>60 && top<120) this.modalMainTop=top;
                     else if (top<=60) this.modalMainTop=60;
                     else this.modalMainTop=120;
 
-                    if (bodyHeight - modalContentHeight - 209 < 0) this.contentHeight=bodyHeight-249;
-                    else this.contentHeight=77;
+                    if (bodyHeight - modalContentHeight - 209 < 0) {
+                        this.contentHeight=bodyHeight-249;
+                        this.handleShadow=true;
+                    } else {
+                        this.contentHeight=77;
+                        this.handleShadow=false;
+                    }
                 });
             }
         },
@@ -73,7 +82,6 @@
 
 <style lang="stylus">
 .p-modal-main-default
-  //top 120px
   border-radius 4px
   min-width 420px
   max-width 1260px

@@ -11,7 +11,7 @@
                 </article>
             </section>
             <section class="p-picker-child-select-box-title-text">
-                <article>{{yearActive}}年</article>
+                <article class="p-picker-active-title" @click="yearActiveClick">{{yearActive}}年</article>
             </section>
             <section class="p-picker-child-select-box-icon">
                 <article
@@ -74,7 +74,7 @@
             },
             monthsArray: {
                 type: Array,
-                default: []
+                default: () => []
             },
 
             /**
@@ -126,6 +126,10 @@
             monthEnter(obj) {
                 if (!this.multiple) return;
                 this.$emit('monthEnter', obj);
+            },
+            // 点击active的年，去选择active的年
+            yearActiveClick() {
+                this.$emit('yearChangePanel', true);
             }
         }
     }
@@ -134,6 +138,7 @@
 <style lang="stylus">
 
     @import "../../static/stylus/datePicker/pickerChild.styl"
+    @import "../../static/stylus/datePicker/pickerPanelYearAndMonth.styl"
 
     .p-picker-child-select-box-title
         display flex
@@ -178,66 +183,5 @@
             font-size 14px
             text-align center
             user-select none
-    .p-picker-panel-content
-        padding 0 0 12px 15px
-        width 100%
-        height 236px
-        .p-picker-panel-select
-            height 224px
-            ul
-                display flex
-                flex-wrap wrap
-                width 100%
-            .p-picker-panel-text
-                margin-right 12px
-                margin-top 12px
-                border-width 1px
-                border-style solid
-                border-color transparent
-                border-radius 4px
-                width 80px
-                height 44px
-                line-height @height
-                text-align center
-                cursor pointer
-                transition background-color .3s
-                &:nth-of-type(3n)
-                    margin-right 0
-                &:hover
-                    background-color $grey-200
-                span
-                    position relative
-                    color $grey-900
-                    font-size 14px
-                    text-align center
-                    transition color .3s
-                    user-select none
-                    z-index 10
-                &.p-picker-panel-text-current
-                    background-color #fff !important
-                    border-color $blue-500
-                    span
-                        color $blue-500
-                &.p-picker-panel-text-multiple
-                    position relative
-                    &::before
-                        position absolute
-                        top -1px
-                        left -7px
-                        display inline-block
-                        background-color $grey-200
-                        width 92px
-                        height 44px
-                        content ''
-                &.p-picker-panel-text-selected
-                    background-color $blue-500 !important
-                    span
-                        color #fff
-                    &::before
-                        display none
-    //&+.p-picker-day-text-multiple
-    //    &::before
-    //        left -18px
-    //        width 48px
 
 </style>

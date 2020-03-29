@@ -49,7 +49,7 @@
             /*穿梭框数据*/
             data: {
                 type: Array,
-                default: []
+                default: () => []
             },
             // 上下级联动
             linkage: {

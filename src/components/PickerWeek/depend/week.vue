@@ -1,5 +1,5 @@
 <template>
-    <div class="p-picker-child-select-box">
+    <div :class="['p-picker-child-select-box', 'p-picker-child-select-box-'+borderLeft]">
         <div class="p-picker-child-select-box-title">
             <section class="p-picker-child-select-box-icon">
                 <article
@@ -18,8 +18,8 @@
                 </article>
             </section>
             <section class="p-picker-child-select-box-title-text">
-                <article>{{yearActive}}年</article>
-                <article>{{monthActive}}月</article>
+                <article class="p-picker-active-title" @click="yearActiveClick">{{yearActive}}年</article>
+                <article class="p-picker-active-title" @click="monthActiveClick">{{monthActive}}月</article>
             </section>
             <section class="p-picker-child-select-box-icon">
                 <article
@@ -82,6 +82,12 @@
         name: "WeekSelect",
         components: { ArrowRightSvg, ArrowRightDoubleSvg },
         props: {
+            // 左边框
+            borderLeft: {
+                type: String,
+                default: ''
+            },
+
             /**
              * 日期
              */
@@ -129,7 +135,7 @@
              */
             weeksArray: {
                 type: Array,
-                default: []
+                default: () => []
             },
 
             /**
@@ -213,6 +219,14 @@
             weekEnter(obj) {
                 if (!this.multiple) return;
                 this.$emit('weekEnter', obj);
+            },
+            // 点击active的年，去选择active的年
+            yearActiveClick() {
+                this.$emit('panelYearHandle', true, true);
+            },
+            // 点击active的月，去选择active的月
+            monthActiveClick() {
+                this.$emit('panelMonthHandle', true, true);
             }
         }
     }
@@ -293,15 +307,15 @@
                     background-color $blue-500
                     .p-picker-day-text
                         span
-                            color #fff
+                            color $white
                 .p-picker-weeks-list-text
                     position absolute
                     top -12px
                     left 50%
                     padding-top 4px
                     padding-bottom 4px
-                    background-color #fff
-                    box-shadow 0 2px 10px 0 rgba(31,35,41,.1)
+                    background-color $white
+                    box-shadow $box-shadow-bottom
                     border-radius 4px
                     transform translateX(-36px)
                     opacity 0
@@ -321,8 +335,8 @@
                         border-width 4px
                         width 0
                         height 0
-                        border-color #fff #fff transparent transparent
-                        box-shadow 2px -2px 4px 0 rgba(31,35,41,.1)
+                        border-color $white $white transparent transparent
+                        box-shadow $box-shadow-min-bottom
                         transform rotate(135deg) translateX(5.5px)
                         pointer-events none
                         content ''
@@ -348,7 +362,7 @@
                     margin-right 0
                 span
                     position relative
-                    line-height 24px
+                    line-height 22px
                     color $grey-900
                     font-size 14px
                     transition color .3s

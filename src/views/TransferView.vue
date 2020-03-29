@@ -1,7 +1,7 @@
 <template>
     <div class="transfer">
         <h3>1.一维结构</h3>
-        <Transfer :data="selectData" height="300" @confirm="treeConfirm" />
+        <Transfer :data="selectData" height="300" @confirm="treeConfirm" @cancel="treeCancel" />
         <h3>2.树形结构-联动</h3>
         <Transfer :data="treeData" @confirm="treeConfirm" />
         <h3>2.1.树形结构-联动-返回半选状态的数据</h3>
@@ -92,6 +92,9 @@
             treeConfirm3(ids) {
                 console.log('确定：：：', ids);
             },
+            treeCancel() {
+                console.log('cancel');
+            }
         }
     }
 </script>

@@ -15,8 +15,10 @@
                 </DropGroup>
             </div>
 
-            <div style="font-size: 16px;">
-                <br><br><br><br><br><br><br><br>
+            <div style="font-size: 16px; text-align: right">
+                <DropGroup :value="selVal" :data="dataSelect" @change="groupChange">
+                    <span class="text">{{selText}}</span>
+                </DropGroup>
             </div>
         </div>
     </div>
@@ -70,6 +72,7 @@
         },
         methods: {
             groupChange({cId, cName, pId}) {
+                console.log(cId, cName, pId);
                 this.selVal=cId;
                 this.selText=cName
             }

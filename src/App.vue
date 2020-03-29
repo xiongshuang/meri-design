@@ -42,16 +42,17 @@
 
 <style lang="stylus">
   .app
-    //font-size 0
+    width 100%
+    height 100%
     .backBox
-      background-color #fff
+      background-color $white
       box-shadow 0 3px 3px rgba(0,0,0,.1)
       width 100%
       height 48px
       line-height 48px
       .title
         text-align center
-        color #000
+        color $black
         font-size 18px
         font-weight 600
     .component-padding
@@ -60,5 +61,8 @@
       h1
         margin-bottom 8px
         font-size 20px
+    .titleLine
+      padding-left 12px
+      border-left 4px solid $grey-400
 
 </style>
